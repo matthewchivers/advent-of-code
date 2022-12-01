@@ -7,30 +7,36 @@ import (
 )
 
 var (
-	podium Podium
+	podium    Podium
+	populated bool
+	lines     []string
 )
 
 func main() {
-	lines := aoc.ReadLines("input.txt")
-
-	populatePodium(lines)
-
-	log.Println("Part 1: Highest number of calories being carried by a single elf: ", getPartOneResult())
-	log.Println("Part 2: Total number of calories being carried by the top three elfs: ", getPartTwoResult())
+	log.Println("Part 1: Highest number of calories being carried by a single elf: ", calculatePartOne())
+	log.Println("Part 2: Total number of calories being carried by the top three elfs: ", calculatePartTwo())
 }
 
 // Returns the correct answer for part one
-func getPartOneResult() int {
+func calculatePartOne() int {
+	populatePodium(lines)
 	return podium.Highest()
 }
 
 // Returns the correct answer for part two
-func getPartTwoResult() int {
+func calculatePartTwo() int {
+	populatePodium(lines)
 	return podium.Total()
 }
 
 // Takes lines of input and passes the totals (for each elf) to a Podium
 func populatePodium(lines []string) {
+	if populated {
+		return
+	}
+	if len(lines) == 0 {
+		lines = aoc.ReadLines("input.txt")
+	}
 	currentCaloriesHeld := 0
 	for _, line := range lines {
 		if line != "" {
@@ -41,6 +47,7 @@ func populatePodium(lines []string) {
 			currentCaloriesHeld = 0
 		}
 	}
+	populated = true
 }
 
 // Podium stores the top three values passed to it
