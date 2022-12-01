@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	lines := ReadLines("input.txt")
+	lines := ReadLines("../input.txt")
 	var calorieTotals *[]int = new([]int)
 	currentCalories := 0
 	for _, line := range lines {
