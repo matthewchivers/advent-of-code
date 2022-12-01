@@ -4,40 +4,48 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 )
 
 func main() {
-	err, lines := readLines("input.txt")
-	if err != nil {
-		log.Fatalf("readLines: %s", err)
-	}
-
-	maxCalories := 0
-	highestElf := 0
-	currentElf := 0
+	lines := readLines("input.txt")
+	var calorieTotals *[]int = new([]int)
 	currentCalories := 0
 	for _, line := range lines {
 		if line != "" {
-			cals, err := strconv.Atoi(line)
-			if err != nil {
-				log.Fatal("problem converting string to int", err)
-				os.Exit(1)
-			}
+			cals := stringToInt(line)
 			currentCalories += cals
 		} else {
-			currentElf++
-			if currentCalories > maxCalories {
-				maxCalories = currentCalories
-				highestElf = currentElf
-			}
+			*calorieTotals = append(*calorieTotals, currentCalories)
 			currentCalories = 0
 		}
 	}
-	log.Printf("Elf %d has the highest calories with %d", highestElf, maxCalories)
+	sort.Ints(*calorieTotals)
+	topThreeTotal := 0
+	for i := 0; i < 3; i++ {
+		lastVal := pop(calorieTotals)
+		topThreeTotal += lastVal
+	}
+
+	log.Println("Top Three Total: ", topThreeTotal)
 }
 
-func readLines(fileName string) (error, []string) {
+func stringToInt(line string) int {
+	val, err := strconv.Atoi(line)
+	if err != nil {
+		log.Fatal("problem converting string to int", err)
+	}
+	return val
+}
+
+func pop(s *[]int) int {
+	backVal := (*s)[len(*s)-1]
+	*s = (*s)[:len(*s)-1]
+	return backVal
+}
+
+func readLines(fileName string) []string {
 	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
@@ -51,7 +59,7 @@ func readLines(fileName string) (error, []string) {
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
-		return err, nil
+		return nil
 	}
-	return nil, lines
+	return lines
 }
