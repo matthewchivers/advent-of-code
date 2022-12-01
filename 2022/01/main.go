@@ -1,7 +1,57 @@
 package main
 
-import ()
+import (
+	"bufio"
+	"log"
+	"os"
+	"strconv"
+)
 
 func main() {
-	println("Hello, Advent of Code 2022!")
+	err, lines := readLines("input.txt")
+	if err != nil {
+		log.Fatalf("readLines: %s", err)
+	}
+
+	maxCalories := 0
+	highestElf := 0
+	currentElf := 0
+	currentCalories := 0
+	for _, line := range lines {
+		if line != "" {
+			cals, err := strconv.Atoi(line)
+			if err != nil {
+				log.Fatal("problem converting string to int", err)
+				os.Exit(1)
+			}
+			currentCalories += cals
+		} else {
+			currentElf++
+			if currentCalories > maxCalories {
+				maxCalories = currentCalories
+				highestElf = currentElf
+			}
+			currentCalories = 0
+		}
+	}
+	log.Printf("Elf %d has the highest calories with %d", highestElf, maxCalories)
+}
+
+func readLines(fileName string) (error, []string) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var lines []string
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+		return err, nil
+	}
+	return nil, lines
 }
