@@ -3,18 +3,18 @@ package main
 import (
 	"log"
 
-	. "github.com/matthewchivers/advent-of-code/lib-go"
+	aoc "github.com/matthewchivers/advent-of-code/utils/go"
 )
 
 func main() {
-	lines := ReadLines("../input.txt")
+	lines := aoc.ReadLines("../input.txt")
 
 	var podium = Podium{}
 	currentCaloriesHeld := 0
 
 	for _, line := range lines {
 		if line != "" {
-			currentCaloriesHeld += StringToInt(line)
+			currentCaloriesHeld += aoc.StringToInt(line)
 		} else {
 			// Reached end of current elf
 			podium.Insert(currentCaloriesHeld)
