@@ -2,30 +2,48 @@ package main
 
 import (
 	"log"
-	"sort"
 
 	. "github.com/matthewchivers/advent-of-code/lib-go"
 )
 
 func main() {
 	lines := ReadLines("../input.txt")
-	var calorieTotals *[]int = new([]int)
-	currentCalories := 0
+
+	var podium = Podium{}
+	currentCaloriesHeld := 0
+
 	for _, line := range lines {
 		if line != "" {
-			cals := StringToInt(line)
-			currentCalories += cals
+			currentCaloriesHeld += StringToInt(line)
 		} else {
-			*calorieTotals = append(*calorieTotals, currentCalories)
-			currentCalories = 0
+			// Reached end of current elf
+			podium.Insert(currentCaloriesHeld)
+			currentCaloriesHeld = 0
 		}
 	}
-	sort.Ints(*calorieTotals)
-	topThreeTotal := 0
-	for i := 0; i < 3; i++ {
-		lastVal := SlicePopInt(calorieTotals)
-		topThreeTotal += lastVal
-	}
 
-	log.Println("Top Three Total: ", topThreeTotal)
+	log.Println("Top Three Total: ", podium.Total())
+}
+
+// Podium stores the top three values passed to it
+type Podium struct {
+	first, second, third int
+}
+
+// Insert a new value into the "podium"
+func (p *Podium) Insert(val int) {
+	if val > p.third {
+		p.third = val
+		if p.third > p.second {
+			p.third, p.second = p.second, p.third
+			if p.second > p.first {
+				p.second, p.first = p.first, p.second
+			}
+		}
+	}
+}
+
+// Total returns the sum of the top three values stored in Podium
+func (p *Podium) Total() int {
+	return p.first + p.second + p.third
 }
