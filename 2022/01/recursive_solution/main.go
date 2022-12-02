@@ -13,19 +13,12 @@ var (
 )
 
 func main() {
-	log.Println("Part 1: Highest number of calories being carried by a single elf: ", calculatePartOne())
-	log.Println("Part 2: Total number of calories being carried by the top three elfs: ", calculatePartTwo())
+	log.Println("Part 1: Highest number of calories being carried by a single elf: ", calculateCaloriesTopElves(1))
+	log.Println("Part 2: Total number of calories being carried by the top three elves: ", calculateCaloriesTopElves(3))
 }
 
-func calculatePartOne() int {
-	return calculateTopN(1)
-}
-
-func calculatePartTwo() int {
-	return calculateTopN(3)
-}
-
-func calculateTopN(n int) int {
+// Calculates the total calories held by the top n elves
+func calculateCaloriesTopElves(n int) int {
 	populatePodium(n)
 	if n == 1 {
 		return topElves[0]
@@ -37,11 +30,11 @@ func calculateTopN(n int) int {
 	return total
 }
 
+// Populates the topElves slice based on data from the input file
 func populatePodium(n int) {
 	topElves = make([]int, n)
-	lines = aoc.ReadLines(inputFileName)
 	currentCaloriesHeld := 0
-	for _, line := range lines {
+	for _, line := range aoc.ReadLines(inputFileName) {
 		if line != "" {
 			currentCaloriesHeld += aoc.StringToInt(line)
 		} else {
@@ -51,23 +44,25 @@ func populatePodium(n int) {
 	}
 }
 
+// Helper function to place an elf in the correct position in the topElves slice
 func placeElf(val int) {
-	if val > topElves[0] {
-		topElves[0] = val
-		sortElf(0)
+	lowestValueIndex := 0
+	if val > topElves[lowestValueIndex] {
+		topElves[lowestValueIndex] = val
+		sortElf(lowestValueIndex)
 	}
 }
 
+// Sorts the most recently added elf into the correct position in the topElves slice
+// Recursively calls itself until the elf is in the correct position
+// i = position of the elf to be sorted
 func sortElf(i int) {
 	prevIndex := i - 1
-	if prevIndex >= 0 {
-		if topElves[prevIndex] > topElves[i] {
-			topElves[prevIndex], topElves[i] = topElves[i], topElves[prevIndex]
-		}
+	if prevIndex >= 0 && topElves[prevIndex] > topElves[i] {
+		topElves[prevIndex], topElves[i] = topElves[i], topElves[prevIndex]
 	}
 	if i < (len(topElves) - 1) {
 		sortElf(i + 1)
 	}
-
 	return
 }
