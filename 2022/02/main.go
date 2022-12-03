@@ -20,7 +20,7 @@ func main() {
 }
 
 func getScore(mySelection, opponentSelection, score *int) {
-	if mySelection == opponentSelection {
+	if *mySelection == *opponentSelection {
 		*score += 3 // draw
 	} else if *mySelection == 1 && *opponentSelection == 3 ||
 		*mySelection == 2 && *opponentSelection == 1 ||
