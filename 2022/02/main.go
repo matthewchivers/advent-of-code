@@ -7,16 +7,23 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/utils/go"
 )
 
+var (
+	points = []byte("ABCXYZ")
+	lines  = aoc.ReadLines("input.txt")
+)
+
 func main() {
-	points := []byte("ABCXYZ")
-	lines := aoc.ReadLines("input.txt")
+	log.Println("Total Score - Part One:", partOne())
+}
+
+func partOne() int {
 	totalScore := 0
 	for _, line := range lines {
 		opponentSelection := bytes.IndexByte(points, line[0])%3 + 1
 		mySelection := bytes.IndexByte(points, line[2])%3 + 1
 		getScore(&mySelection, &opponentSelection, &totalScore)
 	}
-	log.Println("Total score:", totalScore)
+	return totalScore
 }
 
 func getScore(mySelection, opponentSelection, score *int) {
