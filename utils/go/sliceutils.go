@@ -6,3 +6,12 @@ func SlicePopInt(s *[]int) int {
 	*s = (*s)[:len(*s)-1]
 	return backVal
 }
+
+func SliceContainsRune(s []rune, r rune) bool {
+	for _, v := range s {
+		if v == r {
+			return true
+		}
+	}
+	return false
+}
