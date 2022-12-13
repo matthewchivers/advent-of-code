@@ -6,7 +6,8 @@ import (
 	"os"
 )
 
-func ReadLines(fileName string) []string {
+// ReadLinesAsString reads a file line by line and returns a slice of strings
+func ReadLinesAsString(fileName string) []string {
 	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
@@ -23,4 +24,14 @@ func ReadLines(fileName string) []string {
 		return nil
 	}
 	return lines
+}
+
+// ReadFileAsBytes reads a file and returns a slice of bytes
+func ReadFileAsBytes(fileName string) []byte {
+	dat, err := os.ReadFile(fileName)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	return dat
 }

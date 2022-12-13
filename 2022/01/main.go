@@ -35,7 +35,7 @@ func populatePodium(lines []string) {
 		return
 	}
 	if len(lines) == 0 {
-		lines = aoc.ReadLines("input.txt")
+		lines = aoc.ReadLinesAsString("input.txt")
 	}
 	currentCaloriesHeld := 0
 	for _, line := range lines {
