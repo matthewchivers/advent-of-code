@@ -11,7 +11,7 @@ import (
 var (
 	root     = directory{}
 	lines    = aoc.ReadLinesAsString("input.txt")
-	under100 map[string]int
+	dirSizes map[string]int
 )
 
 type directory struct {
@@ -23,6 +23,7 @@ type directory struct {
 
 func main() {
 	log.Println("Part One:", partOne())
+	log.Println("Part Two:", partTwo())
 }
 
 func partOne() int {
@@ -32,31 +33,49 @@ func partOne() int {
 	return size
 }
 
+func partTwo() int {
+	totalSizeOccupied := dirSizes["/"]
+	totalSizeAvailable := 70000000 - totalSizeOccupied
+	totalSizeRequired := 30000000
+	delta := totalSizeRequired - totalSizeAvailable
+	smallestDir := ""
+	for k := range dirSizes {
+		if dirSizes[k] >= delta && (smallestDir == "" || dirSizes[k] < dirSizes[smallestDir]) {
+			smallestDir = k
+		}
+	}
+	return dirSizes[smallestDir]
+}
+
 func addUnder100() int {
 	size := 0
-	for k := range under100 {
-		size += under100[k]
+	for k := range dirSizes {
+		if dirSizes[k] < 100000 {
+			size += dirSizes[k]
+		}
 	}
 	return size
 }
 
 func traverseDirectories() int {
-	under100 = make(map[string]int)
+	dirSizes = make(map[string]int)
 	return traverseDirectory(&root, "")
 }
 
 func traverseDirectory(dir *directory, path string) int {
 	dirSizeTotal := 0
-	path += dir.name + "/"
+	if dir.name != "/" {
+		path += dir.name + "/"
+	} else {
+		path = "/"
+	}
 	for _, subdir := range dir.directories {
 		dirSizeTotal += traverseDirectory(subdir, path)
 	}
 	for _, fileSize := range dir.files {
 		dirSizeTotal += fileSize
 	}
-	if dirSizeTotal <= 100000 && dirSizeTotal > 0 {
-		under100[path] = dirSizeTotal
-	}
+	dirSizes[path] = dirSizeTotal
 	return dirSizeTotal
 }
 
