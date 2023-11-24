@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	aoc "github.com/matthewchivers/advent-of-code/utils/go"
+	aoc "github.com/matthewchivers/advent-of-code/utils"
 )
 
 var (

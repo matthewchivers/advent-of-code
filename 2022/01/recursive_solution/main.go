@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	aoc "github.com/matthewchivers/advent-of-code/utils/go"
+	aoc "github.com/matthewchivers/advent-of-code/utils"
 )
 
 var (
@@ -15,6 +15,16 @@ var (
 func main() {
 	log.Println("Part 1: Highest number of calories being carried by a single elf: ", calculateCaloriesTopElves(1))
 	log.Println("Part 2: Total number of calories being carried by the top three elves: ", calculateCaloriesTopElves(3))
+}
+
+// Returns the correct answer for part one
+func calculatePartOne() int {
+	return calculateCaloriesTopElves(1)
+}
+
+// Returns the correct answer for part two
+func calculatePartTwo() int {
+	return calculateCaloriesTopElves(3)
 }
 
 // Calculates the total calories held by the top n elves

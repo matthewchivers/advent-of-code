@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
-	aoc "github.com/matthewchivers/advent-of-code/utils/go"
+	aoc "github.com/matthewchivers/advent-of-code/utils"
 )
 
 type instruction struct {

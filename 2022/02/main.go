@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"log"
 
-	aoc "github.com/matthewchivers/advent-of-code/utils/go"
+	aoc "github.com/matthewchivers/advent-of-code/utils"
 )
 
 var (
@@ -21,7 +21,7 @@ func main() {
 func processLines(part int) int {
 	score := 0
 	for _, line := range lines {
-		log.Println("Line:", string(line))
+		// log.Println("Line:", string(line))
 		enemyInstruction := bytes.IndexByte(points, line[0])%3 + 1
 		myInstruction := bytes.IndexByte(points, line[2])%3 + 1
 		if part == 1 {
