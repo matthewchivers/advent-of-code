@@ -17,6 +17,16 @@ func main() {
 	log.Println("Part 2: Total number of calories being carried by the top three elves: ", calculateCaloriesTopElves(3))
 }
 
+// Returns the correct answer for part one
+func calculatePartOne() int {
+	return calculateCaloriesTopElves(1)
+}
+
+// Returns the correct answer for part two
+func calculatePartTwo() int {
+	return calculateCaloriesTopElves(3)
+}
+
 // Calculates the total calories held by the top n elves
 func calculateCaloriesTopElves(n int) int {
 	populatePodium(n)
