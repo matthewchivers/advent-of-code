@@ -9,7 +9,7 @@ import (
 
 var (
 	points                = []byte("ABCXYZ")
-	lines                 = aoc.ReadLinesAsString("input.txt")
+	lines                 = aoc.ReadFileAsString("input.txt")
 	rock, paper, scissors = 1, 2, 3
 )
 

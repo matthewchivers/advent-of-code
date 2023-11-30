@@ -35,12 +35,16 @@ func populatePodium(lines []string) {
 		return
 	}
 	if len(lines) == 0 {
-		lines = aoc.ReadLinesAsString("input.txt")
+		lines = aoc.ReadFileAsString("input.txt")
 	}
 	currentCaloriesHeld := 0
 	for _, line := range lines {
 		if line != "" {
-			currentCaloriesHeld += aoc.StringToInt(line)
+			cals, err := aoc.StringToInt(line)
+			if err != nil {
+				log.Fatal(err)
+			}
+			currentCaloriesHeld += cals
 		} else {
 			// Reached end of current elf
 			podium.Insert(currentCaloriesHeld)

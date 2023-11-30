@@ -1,14 +1,15 @@
-package adventofcode
+package utils
 
 import (
-	"log"
 	"strconv"
 )
 
-func StringToInt(line string) int {
+// StringToInt converts a string to an int
+// wrapper for strconv.Atoi for standardization / readability
+func StringToInt(line string) (int, error) {
 	val, err := strconv.Atoi(line)
 	if err != nil {
-		log.Fatal("problem converting string to int", err)
+		return 0, err
 	}
-	return val
+	return val, nil
 }
