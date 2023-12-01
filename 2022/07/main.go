@@ -10,7 +10,7 @@ import (
 
 var (
 	root     = directory{}
-	lines    = aoc.ReadLinesAsString("input.txt")
+	lines    = aoc.ReadFileAsString("input.txt")
 	dirSizes map[string]int
 )
 

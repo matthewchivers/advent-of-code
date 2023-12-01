@@ -44,9 +44,13 @@ func calculateCaloriesTopElves(n int) int {
 func populatePodium(n int) {
 	topElves = make([]int, n)
 	currentCaloriesHeld := 0
-	for _, line := range aoc.ReadLinesAsString(inputFileName) {
+	for _, line := range aoc.ReadFileAsString(inputFileName) {
 		if line != "" {
-			currentCaloriesHeld += aoc.StringToInt(line)
+			cals, err := aoc.StringToInt(line)
+			if err != nil {
+				log.Fatal(err)
+			}
+			currentCaloriesHeld += cals
 		} else {
 			placeElf(currentCaloriesHeld)
 			currentCaloriesHeld = 0

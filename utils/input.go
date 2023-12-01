@@ -1,4 +1,4 @@
-package adventofcode
+package utils
 
 import (
 	"bufio"
@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-// ReadLinesAsString reads a file line by line and returns a slice of strings
-func ReadLinesAsString(fileName string) []string {
+// ReadFileAsString reads a file line by line and returns a slice of strings
+func ReadFileAsString(fileName string) []string {
 	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
@@ -28,10 +28,10 @@ func ReadLinesAsString(fileName string) []string {
 
 // ReadFileAsBytes reads a file and returns a slice of bytes
 func ReadFileAsBytes(fileName string) []byte {
-	dat, err := os.ReadFile(fileName)
+	data, err := os.ReadFile(fileName)
 	if err != nil {
 		log.Fatal(err)
 		return nil
 	}
-	return dat
+	return data
 }
