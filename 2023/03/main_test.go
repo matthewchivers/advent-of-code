@@ -13,9 +13,9 @@ func TestCalculatePartOne(t *testing.T) {
 	assert.Equal(t, expected, result, "partOne() should return the correct value")
 }
 
-// func TestCalculatePartTwo(t *testing.T) {
-// 	expected := 0
-// 	result := partTwo()
+func TestCalculatePartTwo(t *testing.T) {
+	expected := 74528807
+	result := partTwo()
 
-// 	assert.Equal(t, expected, result, "partTwo() should return the correct value")
-// }
+	assert.Equal(t, expected, result, "partTwo() should return the correct value")
+}
