@@ -7,7 +7,7 @@ import (
 )
 
 func TestCalculatePartOne(t *testing.T) {
-	expected := 0
+	expected := 519444
 	result := partOne()
 
 	assert.Equal(t, expected, result, "partOne() should return the correct value")

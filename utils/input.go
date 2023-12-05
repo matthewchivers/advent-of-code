@@ -35,3 +35,28 @@ func ReadFileAsBytes(fileName string) []byte {
 	}
 	return data
 }
+
+// ReadFileAsRuneMatrix reads a file and returns a matrix of strings
+// Returns as [x][y] where x is the column (horizontal) and y is the row (vertical)
+func ReadFileAsRuneMatrix(fileName string) [][]rune {
+	lines := ReadFileAsString(fileName)
+	var matrix [][]rune
+	for _, line := range lines {
+		// append each character in the line to the matrix
+		var row []rune
+		for _, char := range line {
+			row = append(row, char)
+		}
+		matrix = append(matrix, row)
+	}
+	// convert matrix from [y][x] to [x][y]
+	newMatrix := [][]rune{}
+	for x := 0; x < len(matrix[0]); x++ {
+		row := []rune{}
+		for y := 0; y < len(matrix); y++ {
+			row = append(row, matrix[y][x])
+		}
+		newMatrix = append(newMatrix, row)
+	}
+	return newMatrix
+}
