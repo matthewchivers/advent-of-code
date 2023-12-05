@@ -6,7 +6,7 @@ import (
 	"github.com/matthewchivers/advent-of-code/utils"
 )
 
-var directions = []struct{ dx, dy int }{
+var directions = []struct{ x, y int }{
 	{1, 0}, {-1, 0}, {0, 1}, {0, -1}, // up, down, left, right
 	{1, 1}, {-1, -1}, {1, -1}, {-1, 1}, // diagonals
 }
@@ -111,7 +111,7 @@ func getAdjacentGears(matrix [][]rune, x int, y int) []coord {
 	// identifies all adjacent gears to the given x and y
 	gears := []coord{}
 	for _, direction := range directions {
-		newX, newY := x+direction.dx, y+direction.dy
+		newX, newY := x+direction.x, y+direction.y
 		if newX >= 0 && newX < len(matrix) && newY >= 0 && newY < len(matrix[x]) {
 			character := matrix[newX][newY]
 			charString := string(character)
