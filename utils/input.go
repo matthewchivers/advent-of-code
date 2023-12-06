@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-// ReadFileAsString reads a file line by line and returns a slice of strings
-func ReadFileAsString(fileName string) []string {
+// ReadFileAsLines reads a file line by line and returns a slice of strings
+func ReadFileAsLines(fileName string) []string {
 	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
@@ -39,7 +39,7 @@ func ReadFileAsBytes(fileName string) []byte {
 // ReadFileAsRuneMatrix reads a file and returns a matrix of strings
 // Returns as [x][y] where x is the column (horizontal) and y is the row (vertical)
 func ReadFileAsRuneMatrix(fileName string) [][]rune {
-	lines := ReadFileAsString(fileName)
+	lines := ReadFileAsLines(fileName)
 	var matrix [][]rune
 	for _, line := range lines {
 		// append each character in the line to the matrix

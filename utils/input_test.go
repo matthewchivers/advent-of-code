@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestReadFileAsString(t *testing.T) {
+func TestReadFileAsLines(t *testing.T) {
 	tests := []struct {
 		name     string
 		testData string
@@ -43,7 +43,7 @@ func TestReadFileAsString(t *testing.T) {
 			}
 
 			// Call the function being tested
-			result := ReadFileAsString(tempFile.Name())
+			result := ReadFileAsLines(tempFile.Name())
 
 			// Check if the result is nil (empty file)
 			if tt.testData == "" {

@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	lines = aoc.ReadFileAsString("input.txt")
+	lines = aoc.ReadFileAsLines("input.txt")
 )
 
 func main() {
