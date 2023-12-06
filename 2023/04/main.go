@@ -7,6 +7,20 @@ import (
 	"github.com/matthewchivers/advent-of-code/utils"
 )
 
+type ScratchCard struct {
+	winningNumbers map[string]bool
+	entryNumbers   []string
+	count          int
+}
+
+func NewScratchCard(winningNumbers map[string]bool, entryNumbers []string) *ScratchCard {
+	return &ScratchCard{
+		winningNumbers: winningNumbers,
+		entryNumbers:   entryNumbers,
+		count:          1,
+	}
+}
+
 func main() {
 	fmt.Println("Hello, advent of code 2023 - Day 4!")
 	fmt.Println("Part one:", partOne())
@@ -14,21 +28,15 @@ func main() {
 }
 
 // partOne returns the answer to part one of the day's puzzle
-// Parse score cards (lottery tickets of sorts) each winning number on a card doubles the score (score of 1 for the first match)
+// Each winning number on a card doubles the score (score 1 for the first match)
 // Returns the total score for all cards
 func partOne() int {
-	lines := utils.ReadFileAsString("input.txt")
 	score := 0
-	for _, line := range lines {
-		winners, entries := parseLine(line)
+	for _, scratchCard := range getInventory() {
 		lineScore := 0
-		for _, entry := range entries {
-			if _, ok := winners[entry]; ok {
-				if lineScore == 0 {
-					lineScore = 1
-				} else {
-					lineScore *= 2
-				}
+		for _, entry := range scratchCard.entryNumbers {
+			if scratchCard.winningNumbers[entry] {
+				lineScore += utils.MaxInt(lineScore, 1)
 			}
 		}
 		score += lineScore
@@ -36,21 +44,58 @@ func partOne() int {
 	return score
 }
 
-func parseLine(line string) (map[string]bool, []string) {
-	// Card   1: 10  5 11 65 27 43 44 29 24 69 | 65 66 18 14 17 97 95 34 38 23 10 25 22 15 87  9 28 43  4 71 89 20 72  5  6
-	colonIndex := strings.Index(line, ":")
-	line = line[colonIndex+2:]
-	split := strings.Split(line, "|")
-	winners := strings.Fields(split[0])
-	winnersMap := make(map[string]bool)
-	for _, winner := range winners {
-		winnersMap[winner] = true
+// partTwo returns the answer to part two of the day's puzzle
+// Each winning number on a card grants a free card to the next card in the inventory
+// e.g. 4 matches grants 1 copy each of the next 4 cards
+// This stacks (if I have 2 cards with 4 matches, I get 2 copies each of the next 4 cards)
+// Returns the total number of cards
+func partTwo() int {
+	inv := getInventory()
+	for cardNumber := 1; cardNumber < len(inv)+1; cardNumber++ {
+		matches := 0
+		scratchcard := *inv[cardNumber]
+		for _, entry := range scratchcard.entryNumbers {
+			if scratchcard.winningNumbers[entry] {
+				matches++
+				nextIndex := cardNumber + matches
+				if _, ok := inv[nextIndex]; ok {
+					inv[nextIndex].count += scratchcard.count
+				}
+			}
+		}
 	}
-	entries := strings.Fields(split[1])
-	return winnersMap, entries
+
+	totalCards := 0
+	for _, card := range inv {
+		totalCards += card.count
+	}
+	return totalCards
 }
 
-// partTwo returns the answer to part two of the day's puzzle
-func partTwo() int {
-	return 0
+func parseLine(line string) (map[string]bool, []string) {
+
+	lineAfterColon := strings.SplitN(line, ": ", 2)[1]
+	parts := strings.Split(lineAfterColon, " | ")
+
+	winningNumbers := strings.Fields(parts[0])
+	entryNumbers := strings.Fields(parts[1])
+
+	// Convert winning numbers to a map for fast lookup
+	winningNumbersMap := make(map[string]bool)
+	for _, winner := range winningNumbers {
+		winningNumbersMap[winner] = true
+	}
+
+	return winningNumbersMap, entryNumbers
+}
+
+func getInventory() map[int]*ScratchCard {
+	lines := utils.ReadFileAsString("input.txt")
+	inv := make(map[int]*ScratchCard)
+	for i, line := range lines {
+		// i + 1 because the card numbers start at 1
+		// makes debugging more human-friendly
+		inv[i+1] = NewScratchCard(parseLine(line))
+	}
+	return inv
 }
