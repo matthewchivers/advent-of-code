@@ -2,6 +2,7 @@ package utils
 
 import (
 	"strconv"
+	"strings"
 )
 
 // StringToInt converts a string to an int
@@ -12,4 +13,19 @@ func StringToInt(line string) (int, error) {
 		return 0, err
 	}
 	return val, nil
+}
+
+// StringToIntArray converts a string to an array of ints
+// wrapper for strconv.Atoi for standardization / readability
+func StringToIntArray(line string) ([]int, error) {
+	var intArray []int
+	fields := strings.Fields(line)
+	for _, field := range fields {
+		val, err := strconv.Atoi(field)
+		if err != nil {
+			return nil, err
+		}
+		intArray = append(intArray, val)
+	}
+	return intArray, nil
 }

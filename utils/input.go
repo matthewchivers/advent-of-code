@@ -36,6 +36,26 @@ func ReadFileAsBytes(fileName string) []byte {
 	return data
 }
 
+// ReadFileAsByteChunks reads a file and returns a slice of byte slices
+func ReadFileAsByteChunks(fileName string) [][]byte {
+	data := ReadFileAsBytes(fileName)
+	var chunks [][]byte
+	var chunk []byte
+	for i := 0; i < len(data); i++ {
+		if i == len(data)-1 || (data[i] == '\n' && data[i+1] == '\n') {
+			if data[i] != '\n' {
+				chunk = append(chunk, data[i])
+			}
+			chunks = append(chunks, chunk)
+			chunk = []byte{}
+			i++ // skip the second newline
+			continue
+		}
+		chunk = append(chunk, data[i])
+	}
+	return chunks
+}
+
 // ReadFileAsRuneMatrix reads a file and returns a matrix of strings
 // Returns as [x][y] where x is the column (horizontal) and y is the row (vertical)
 func ReadFileAsRuneMatrix(fileName string) [][]rune {
