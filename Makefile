@@ -16,3 +16,15 @@ test-year:
 test-day:
 	@echo "Running tests for year $(YEAR), day $(DAY)..."
 	@go test ./$(YEAR)/$(DAY)
+
+benchmark:
+	@echo "Running all benchmarks..."
+	@go test -bench=. ./...
+
+benchmark-year:
+	@echo "Running benchmarks for year $(YEAR)..."
+	@go test -bench=. ./$(YEAR)/...
+
+benchmark-day:
+	@echo "Running benchmarks for year $(YEAR), day $(DAY)..."
+	@go test -bench=. ./$(YEAR)/$(DAY)

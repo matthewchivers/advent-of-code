@@ -35,6 +35,7 @@ To ensure the accuracy and efficiency of the solutions, tests can be run as foll
 - Run tests for all years and days: `make test`
 - Run tests for all days in a year: `make test-year YEAR=2022`
 - Run tests for a specific day: `make test-day YEAR=2022 DAY=01`
+- Run benchmarks: `make benchmark`
 
 ## Join the Journey
 
