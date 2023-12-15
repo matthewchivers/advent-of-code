@@ -45,7 +45,7 @@ func TestStringToIntArray(t *testing.T) {
 		{
 			"empty string",
 			"",
-			[]int{},
+			[]int(nil),
 			false,
 		},
 		{

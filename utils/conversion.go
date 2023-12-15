@@ -29,3 +29,11 @@ func StringToIntArray(line string) ([]int, error) {
 	}
 	return intArray, nil
 }
+
+// BoolToInt converts a bool to an int
+func BoolToInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
+}

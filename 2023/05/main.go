@@ -8,9 +8,9 @@ import (
 	"github.com/matthewchivers/advent-of-code/utils"
 )
 
-type Segment struct {
-	start, end int
-}
+type Segment struct{ start, end int }
+
+type SegmentList []Segment
 
 type Transformation struct {
 	source     Segment
@@ -30,81 +30,75 @@ func main() {
 // Part One returns the answer to part one of the day's puzzle
 func partOne() int {
 	chunks := utils.ReadFileAsByteChunks("input.txt")
-	seeds := getIndividualSeeds(chunks)
-	lowest := getLowestLocation(chunks, seeds)
+	seeds := getSeedRanges(chunks[0], false)
+	lowest := processSeeds(chunks, seeds)
 	return lowest
 }
 
 // Part Two returns the answer to part two of the day's puzzle
 func partTwo() int {
 	chunks := utils.ReadFileAsByteChunks("input.txt")
-	seeds := getSeedRanges(chunks[0])
-	lowest := getLowestLocation(chunks, seeds)
+	seeds := getSeedRanges(chunks[0], true)
+	lowest := processSeeds(chunks, seeds)
 	return lowest
 }
 
-func getLowestLocation(chunks [][]byte, seeds []Segment) int {
-	stages := getStages(chunks[1:])
-
-	transformedSeeds := seeds
-	transformedSeeds = applyStages(stages, transformedSeeds)
-
-	transformedSeeds = mergeSegmentLists(transformedSeeds)
-	lowest := getLowestSegment(transformedSeeds)
-	return lowest
-}
-
-func getIndividualSeeds(chunks [][]byte) []Segment {
-	seeds := []Segment{}
-	seedSpec, err := utils.StringToIntArray(strings.SplitN(string(chunks[0]), ": ", 2)[1])
+// getSeedRanges returns a list of segments from the seed chunk
+func getSeedRanges(chunk []byte, series bool) SegmentList {
+	seeds := SegmentList{}
+	seedSpec, err := utils.StringToIntArray(strings.SplitN(string(chunk), ": ", 2)[1])
 	if err != nil {
 		panic(err)
 	}
 	for i := 0; i < len(seedSpec); i++ {
-		seg := Segment{
+		// if !series: [20, 5, 10, 4] -> 20, 5, 10, 4
+		// if series: [20, 5, 10, 4] -> 20, 21, 22, 23, 24, 10, 11, 12, 13
+		seeds = append(seeds, Segment{
 			start: seedSpec[i],
-			end:   seedSpec[i],
+			end:   seedSpec[i] + ((seedSpec[i+utils.BoolToInt(series)] - 1) * utils.BoolToInt(series)),
+		})
+		if series {
+			i++
 		}
-		seeds = append(seeds, seg)
 	}
 	return seeds
 }
 
-func getLowestSegment(transformedSeeds []Segment) int {
-	lowest := math.MaxInt64
-	for _, seed := range transformedSeeds {
-		if seed.start < lowest {
-			lowest = seed.start
-		}
+// processSeeds returns the lowest value of the start of all the segments
+func processSeeds(chunks [][]byte, seeds SegmentList) int {
+	stages := getStages(chunks[1:])
+
+	transformedSeeds := seeds
+	for _, stage := range stages {
+		transformedSeeds.ApplyStage(stage)
 	}
-	return lowest
+	transformedSeeds.Merge()
+
+	return transformedSeeds.Lowest()
 }
 
-func applyStages(stages []TransformationStage, transformedSeeds []Segment) []Segment {
-	for _, stage := range stages {
-
-		seedBuffer := mergeSegmentLists(transformedSeeds)
-		transformedSeeds = []Segment{}
-		for len(seedBuffer) > 0 {
-			seed := seedBuffer[0]
-			seedBuffer = seedBuffer[1:]
-			trnApplied := false
-			for _, trnMap := range stage.transformations {
-				if trnMap.source.start <= seed.end && trnMap.source.end >= seed.start {
-					transformedSeg, leftOvers := applyTransformation(trnMap, seed)
-					seedBuffer = append(seedBuffer, leftOvers...)
-					transformedSeeds = append(transformedSeeds, transformedSeg...)
-					trnApplied = true
-					break
-				}
-
+func (segList *SegmentList) ApplyStage(stage TransformationStage) {
+	seedBuffer := *segList
+	workingSegs := SegmentList{}
+	for len(seedBuffer) > 0 {
+		seed := seedBuffer[0]
+		seedBuffer = seedBuffer[1:]
+		trnApplied := false
+		for _, trnMap := range stage.transformations {
+			if trnMap.source.start <= seed.end && trnMap.source.end >= seed.start {
+				transformedSeg, leftOvers := seed.applyTransformation(trnMap)
+				seedBuffer = append(seedBuffer, leftOvers...)
+				workingSegs = append(workingSegs, transformedSeg...)
+				trnApplied = true
+				break
 			}
-			if !trnApplied {
-				transformedSeeds = append(transformedSeeds, seed)
-			}
+
+		}
+		if !trnApplied {
+			workingSegs = append(workingSegs, seed)
 		}
 	}
-	return transformedSeeds
+	*segList = workingSegs
 }
 
 func getStages(chunks [][]byte) []TransformationStage {
@@ -130,86 +124,77 @@ func getStages(chunks [][]byte) []TransformationStage {
 	return stages
 }
 
-func applyTransformation(transformation Transformation, seed Segment) ([]Segment, []Segment) {
-	workingSeeds := []Segment{}
-	transformedSeeds := []Segment{}
-	if transformation.source.start > seed.start {
-		preSeed := Segment{
-			start: seed.start,
+// applyTransformation applies the transformation to the seed and returns the transformed seed and any remainders
+func (seg *Segment) applyTransformation(transformation Transformation) (SegmentList, SegmentList) {
+	remainder, transformedSeeds := SegmentList{}, SegmentList{}
+
+	if transformation.source.start > seg.start {
+		// everything before the transformed segment
+		remainder = append(remainder, Segment{
+			start: seg.start,
 			end:   transformation.source.start - 1,
-		}
-		workingSeeds = append(workingSeeds, preSeed)
+		})
 	}
-	transformedSeed := Segment{
-		start: utils.MaxInt(transformation.source.start, seed.start) + transformation.alteration,
-		end:   utils.MinInt(transformation.source.end, seed.end) + transformation.alteration,
-	}
-	transformedSeeds = append(transformedSeeds, transformedSeed)
-
-	if transformation.source.end < seed.end {
-		postSeed := Segment{
+	if transformation.source.end < seg.end {
+		// everything after the transformed segment
+		remainder = append(remainder, Segment{
 			start: transformation.source.end + 1,
-			end:   seed.end,
-		}
-		workingSeeds = append(workingSeeds, postSeed)
+			end:   seg.end,
+		})
 	}
-	return transformedSeeds, workingSeeds
+
+	transformedSeeds = append(transformedSeeds, Segment{
+		start: utils.MaxInt(transformation.source.start, seg.start) + transformation.alteration,
+		end:   utils.MinInt(transformation.source.end, seg.end) + transformation.alteration,
+	})
+
+	return transformedSeeds, remainder
 }
 
-func getSeedRanges(chunks []byte) []Segment {
-	seeds := []Segment{}
-	seedSpec, err := utils.StringToIntArray(strings.SplitN(string(chunks), ": ", 2)[1])
-	if err != nil {
-		panic(err)
-	}
-	for i := 0; i < len(seedSpec); i += 2 {
-		seg := Segment{
-			start: seedSpec[i],
-			end:   seedSpec[i] + seedSpec[i+1] - 1,
-		}
-		seeds = append(seeds, seg)
-	}
-	return seeds
-}
-
-func mergeSegmentLists(segs []Segment) []Segment {
-	workingSegs := segs
-	workingSegs = sortSegments(workingSegs)
-	merged := []Segment{}
-	// merge any segments that overlap. It is possible for two (or more) segments to overlap
-	// with a third segment, so we need to keep merging until there are no more overlaps
-	for len(workingSegs) > 0 {
-		seg := workingSegs[0]
-		workingSegs = workingSegs[1:]
-		for i := 0; i < len(workingSegs); i++ {
-			// if the segment overlaps with the current segment
-			if seg.start <= workingSegs[i].end+1 && seg.end >= workingSegs[i].start-1 {
-				// merge the segments
-				seg.start = utils.MinInt(seg.start, workingSegs[i].start)
-				seg.end = utils.MaxInt(seg.end, workingSegs[i].end)
-				// remove the overlapping segment
-				workingSegs = append(workingSegs[:i], workingSegs[i+1:]...)
-			}
-		}
-		merged = append(merged, seg)
-	}
-
-	return merged
-}
-
-func sortSegments(segs []Segment) []Segment {
-	sorted := segs
+func (segList *SegmentList) Sort() {
 	swapped := true
 	for swapped {
 		swapped = false
-		for i := 0; i < len(sorted); i++ {
-			for j := i + 1; j < len(sorted); j++ {
-				if sorted[i].start > sorted[j].start {
-					sorted[i], sorted[j] = sorted[j], sorted[i]
+		for i := 0; i < len(*segList); i++ {
+			for j := i + 1; j < len(*segList); j++ {
+				if (*segList)[i].start > (*segList)[j].start {
+					(*segList)[i], (*segList)[j] = (*segList)[j], (*segList)[i]
 					swapped = true
 				}
 			}
 		}
 	}
-	return sorted
+}
+
+func (segList *SegmentList) Merge() {
+	segList.Sort()
+	merged := SegmentList{}
+	// merge any segments that overlap. It is possible for two (or more) segments to overlap
+	// with a third segment, so we need to keep merging until there are no more overlaps
+	for len(*segList) > 0 {
+		seg := (*segList)[0]
+		*segList = (*segList)[1:]
+		for i := 0; i < len(*segList); i++ {
+			// if the segment overlaps with the current segment
+			if seg.start <= (*segList)[i].end+1 && seg.end >= (*segList)[i].start-1 {
+				// merge the segments
+				seg.start = utils.MinInt(seg.start, (*segList)[i].start)
+				seg.end = utils.MaxInt(seg.end, (*segList)[i].end)
+				// remove the overlapping segment
+				*segList = append((*segList)[:i], (*segList)[i+1:]...)
+			}
+		}
+		merged = append(merged, seg)
+	}
+	*segList = merged
+}
+
+func (segList *SegmentList) Lowest() int {
+	lowest := math.MaxInt64
+	for _, seg := range *segList {
+		if seg.start < lowest {
+			lowest = seg.start
+		}
+	}
+	return lowest
 }
