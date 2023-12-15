@@ -44,7 +44,7 @@ func calculateCaloriesTopElves(n int) int {
 func populatePodium(n int) {
 	topElves = make([]int, n)
 	currentCaloriesHeld := 0
-	for _, line := range aoc.ReadFileAsString(inputFileName) {
+	for _, line := range aoc.ReadFileAsLines(inputFileName) {
 		if line != "" {
 			cals, err := aoc.StringToInt(line)
 			if err != nil {

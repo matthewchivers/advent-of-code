@@ -28,7 +28,7 @@ func main() {
 // Add all GameIDs that have a red, green and blue value less than or equal to the gameMax
 func partOne() int {
 	sum := 0
-	lines := utils.ReadFileAsString("input.txt")
+	lines := utils.ReadFileAsLines("input.txt")
 	for i, line := range lines {
 		gameRes := processGameLine(line)
 		if gameRes.red <= gameMax.red && gameRes.green <= gameMax.green && gameRes.blue <= gameMax.blue {
@@ -42,7 +42,7 @@ func partOne() int {
 // Add all the power sets of red, green and blue for each game
 func partTwo() int {
 	sum := 0
-	lines := utils.ReadFileAsString("input.txt")
+	lines := utils.ReadFileAsLines("input.txt")
 	for _, line := range lines {
 		gameRes := processGameLine(line)
 		sum += gameRes.red * gameRes.green * gameRes.blue

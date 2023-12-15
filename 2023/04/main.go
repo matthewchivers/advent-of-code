@@ -90,7 +90,7 @@ func parseLine(line string) (map[string]bool, []string) {
 }
 
 func getInventory() map[int]*ScratchCard {
-	lines := utils.ReadFileAsString("input.txt")
+	lines := utils.ReadFileAsLines("input.txt")
 	inv := make(map[int]*ScratchCard)
 	for i, line := range lines {
 		// i + 1 because the card numbers start at 1

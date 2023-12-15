@@ -31,7 +31,7 @@ func partTwo() int {
 
 func loopLinesAndChars(part int) int {
 	sum := 0
-	lines := utils.ReadFileAsString("input.txt")
+	lines := utils.ReadFileAsLines("input.txt")
 	for _, line := range lines {
 		var first, last string
 		for i, character := range line {
