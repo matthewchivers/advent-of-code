@@ -1,4 +1,4 @@
-package utils
+package util
 
 // MaxInt returns the larger of two integers
 func MaxInt(a, b int) int {

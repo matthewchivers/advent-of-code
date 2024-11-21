@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/matthewchivers/advent-of-code/utils"
+	"github.com/matthewchivers/advent-of-code/util"
 )
 
 func main() {
@@ -18,7 +18,7 @@ type Race struct{ Time, Distance int }
 
 // Part One returns the answer to part one of the day's puzzle
 func partOne() int {
-	lines := utils.ReadFileAsLines("input.txt")
+	lines := util.ReadFileAsLines("input.txt")
 	races, err := parseRaces(lines[0], lines[1], false)
 	if err != nil {
 		panic(err)
@@ -32,7 +32,7 @@ func partOne() int {
 
 // Part Two returns the answer to part two of the day's puzzle
 func partTwo() int {
-	lines := utils.ReadFileAsLines("input.txt")
+	lines := util.ReadFileAsLines("input.txt")
 	races, err := parseRaces(lines[0], lines[1], true)
 	if err != nil {
 		panic(err)
@@ -104,11 +104,11 @@ func parseRaces(times, distances string, stripSpaces bool) ([]Race, error) {
 		timeString = strings.ReplaceAll(timeString, " ", "")
 		distanceString = strings.ReplaceAll(distanceString, " ", "")
 	}
-	timeVals, err := utils.StringToIntArray(timeString)
+	timeVals, err := util.StringToIntArray(timeString)
 	if err != nil {
 		return nil, err
 	}
-	distanceVals, err := utils.StringToIntArray(distanceString)
+	distanceVals, err := util.StringToIntArray(distanceString)
 	if err != nil {
 		return nil, err
 	}

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/matthewchivers/advent-of-code/utils"
+	"github.com/matthewchivers/advent-of-code/util"
 )
 
 var directions = []struct{ x, y int }{
@@ -25,7 +25,7 @@ func main() {
 // partOne returns the answer to part one of the day's puzzle
 // The puzzle is to find the sum of all numbers that have a symbol adjacent to them
 func partOne() int {
-	matrix := utils.ReadFileAsRuneMatrix("input.txt")
+	matrix := util.ReadFileAsRuneMatrix("input.txt")
 
 	sum := 0
 
@@ -39,7 +39,7 @@ func partOne() int {
 				includeNumber = includeNumber || hasAdjacentSymbol(matrix, x, y)
 			}
 			if (character > '9' || character < '0' || x == len(matrix)-1) && numberBuffer != "" {
-				numInt, _ := utils.StringToInt(numberBuffer)
+				numInt, _ := util.StringToInt(numberBuffer)
 				if includeNumber {
 					sum += numInt
 				}
@@ -55,7 +55,7 @@ func partOne() int {
 // partTwo returns the answer to part two of the day's puzzle
 // The puzzle is to add the powers of two numbers that are adjacent to the same gear
 func partTwo() int {
-	matrix := utils.ReadFileAsRuneMatrix("input.txt")
+	matrix := util.ReadFileAsRuneMatrix("input.txt")
 
 	sum := 0
 
@@ -72,7 +72,7 @@ func partTwo() int {
 				}
 			}
 			if (character > '9' || character < '0' || x == len(matrix)-1) && numberBuffer != "" {
-				numInt, _ := utils.StringToInt(numberBuffer)
+				numInt, _ := util.StringToInt(numberBuffer)
 				if len(gears) > 0 {
 					for gear := range gears {
 						gearMap[gear] = append(gearMap[gear], numInt)
