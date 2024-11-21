@@ -1,44 +1,40 @@
-# Advent Of Code 🎄✨
+# Advent of Code 🎄✨
 
-Welcome to my comprehensive repository for all my [Advent of Code](https://adventofcode.com/) solutions. This repository is a collection of my journey through the annual Advent of Code - a series of challenging and engaging programming puzzles set during the festive season. Here, you'll find a showcase of my solutions, each reflecting the problem-solving skills and strategies I employed to tackle the diverse and complex puzzles presented each year.
+Welcome to my Advent of Code repository! This is where I put my solutions for [Advent of Code](https://adventofcode.com/) puzzles, which I tackle each year for a bit of festive fun. If you're here, I assume you either like a good puzzle or are just curious about my approach. Either way, you're welcome to have a look around.
 
-## Repository Structure
+## What's in Here?
 
-Organized by year, this repository encapsulates the essence of problem-solving and programming skills honed over time. For each year, you'll find:
+- **Yearly Directories**: Each year's puzzles are tucked neatly into their own folder.
+- **Daily Solutions**: Each day's challenge gets its own solution, and, when I'm feeling ambitious, a bit of commentary.
+- **Tests**: Yep, there are tests. Even fun should be done right.
 
-- **Yearly Directories:** Each year of participation has its dedicated directory.
-- **Daily Solutions:** Solutions for each day's puzzle within the respective year's directory.
-- **Readme Files:** Overview and reflections on the puzzles, my approach, and the learning outcomes.
-- **Test Cases:** Unit tests to validate and ensure the robustness of each solution.
+## Participation and Plans
 
-## Participated Years
+I've partially completed 2022 and 2023, and I'm looking forward to tackling the 2024 challenges. The ultimate aim is to eventually complete every challenge for every year. Feel free to take a peek at my progress so far:
 
-- [**2022 Solutions**](./2022/): The first year I embarked on this coding adventure, where each day presented a new set of intriguing problems. Here's where my Advent of Code journey began in earnest. [Link to Advent Of Code 2022 Challenges](https://adventofcode.com/2022)
-
-## Upcoming: Advent of Code 2023
-
-With anticipation, I am gearing up for the Advent of Code 2023. This upcoming edition promises to bring more challenging and exciting puzzles. Stay tuned for the solutions and experiences from this year's adventure!
+- [**2022 Solutions**](./2022/)
+- [**2023 Solutions**](./2023/)
 
 ## Running the Solutions
 
-To run any specific solution, navigate to the year and day directory, and execute the Go file:
+If you want to run any of the solutions, just navigate to the specific year's folder and the day's directory, then fire it up with Go:
 
-\```bash
-cd 2022/01  # Example for Day 1 of 2022
+```bash
+cd 2022/01  # e.g. Day 1 of 2022
 go run main.go
-\```
+```
 
-## Testing the Solutions
+## Testing
 
-To ensure the accuracy and efficiency of the solutions, tests can be run as follows:
+Because what's a solution without a bit of verification:
 
-- Run tests for all years and days: `make test`
-- Run tests for all days in a year: `make test-year YEAR=2022`
-- Run tests for a specific day: `make test-day YEAR=2022 DAY=01`
-- Run benchmarks: `make benchmark`
+- **Run all tests**: `make test`
+- **Year-specific tests**: `make test-year YEAR=2022`
+- **Day-specific tests**: `make test-day YEAR=2022 DAY=01`
+- **Benchmarks**: `make benchmark`
 
-## Join the Journey
+## Dive In
 
-Feel free to explore the puzzles and solutions. Each year's directory is a saga of its own, filled with unique challenges and learnings.
+This repository is a bit of a mixed bag: part problem-solving practice, part festive tradition. I keep it organised and professional where it counts, but it’s mostly here because I love the challenge. Feel free to explore, borrow ideas, make suggestions, or just see how someone else approaches these puzzles.
 
-Happy coding, and may your festive season be filled with joy and interesting problems to solve! 🚀🌟
+Happy coding, and may your December be full of interesting problems and just enough coffee to solve them! ☕✨
