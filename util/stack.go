@@ -60,3 +60,7 @@ func (s *Stack[T]) Reverse() {
 		s.items[i], s.items[j] = s.items[j], s.items[i]
 	}
 }
+
+func (s *Stack[T]) IsEmpty() bool {
+	return len(s.items) == 0
+}
