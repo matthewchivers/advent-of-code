@@ -8,14 +8,14 @@ import (
 
 func TestCalculatePartOne(t *testing.T) {
 	expected := 515
-	result := solvePart(1)
+	result := partOne()
 
 	assert.Equal(t, expected, result, "solvePart(1) should return the correct highest value")
 }
 
 func TestCalculatePartTwo(t *testing.T) {
 	expected := 883
-	result := solvePart(2)
+	result := partTwo()
 
 	assert.Equal(t, expected, result, "solvePart(2) should return the correct total value")
 }
