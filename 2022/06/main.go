@@ -1,41 +1,18 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
-
-type lastN struct {
-	list []byte
-}
-
-func (l *lastN) init(size int) {
-	l.list = make([]byte, size)
-}
-
-func (l *lastN) add(c byte) {
-	l.list = append(l.list[1:], c)
-}
-
-func (l *lastN) allUnique() bool {
-	chars := make(map[byte]int)
-	for _, c := range l.list {
-		chars[c]++
-		if chars[c] > 1 {
-			return false
-		}
-	}
-	return true
-}
 
 var (
 	data = aoc.ReadFileAsBytes("input.txt")
 )
 
 func main() {
-	log.Println("Part 1:", partOne())
-	log.Println("Part 2:", partTwo())
+	fmt.Println("Part 1:", partOne())
+	fmt.Println("Part 2:", partTwo())
 }
 
 func partOne() int {
@@ -46,15 +23,36 @@ func partTwo() int {
 	return getFirstUnique(14)
 }
 
+// getFirstUnique returns the index of the first window of size `size` that contains no duplicate bytes
+// If no such window exists, -1 is returned
+// The function uses a sliding window approach to keep track of the frequency of bytes in the window
+// and the number of duplicate bytes in the window
 func getFirstUnique(size int) int {
-	var lastFew lastN
-	lastFew.init(size)
-	for i, c := range data {
-		lastFew.add(c)
-		if i > size-1 {
-			if lastFew.allUnique() {
-				return i + 1
+	var freq [256]int // count occurrences of each byte (0-256) in the window
+	duplicates := 0   // track number of duplicate bytes in the window
+
+	for i := 0; i < len(data); i++ {
+		b := data[i]
+		freq[b]++ // add byte to window
+
+		if freq[b] == 2 {
+			// byte addition has caused a duplicate - increment the count
+			duplicates++
+		}
+
+		// if the window is now larger than the required size, remove the byte at the start of the window
+		if i >= size {
+			prevByte := data[i-size]
+			freq[prevByte]--
+
+			// byte removal has caused the byte to no longer be a duplicate - decrement the count
+			if freq[prevByte] == 1 {
+				duplicates--
 			}
+		}
+
+		if i >= size-1 && duplicates == 0 {
+			return i + 1
 		}
 	}
 	return -1
