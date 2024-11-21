@@ -14,6 +14,7 @@ var (
 	dirSizes map[string]int
 )
 
+// directory represents a directory in a "file system" with a name, a map of subdirectories, and a map of files with their sizes.
 type directory struct {
 	directories map[string]*directory
 	files       map[string]int
@@ -29,7 +30,7 @@ func main() {
 // calculates the total size of all directories and files whose size is less than 100000 and returns the result.
 func partOne() int {
 	initialise()
-	size := addUnder100()
+	size := addUnder100K()
 	return size
 }
 
@@ -39,14 +40,15 @@ func partTwo() int {
 	totalSizeOccupied := dirSizes["/"]
 	totalSizeAvailable := 70000000 - totalSizeOccupied
 	totalSizeRequired := 30000000
-	delta := totalSizeRequired - totalSizeAvailable
-	smallestDir := ""
-	for k := range dirSizes {
-		if dirSizes[k] >= delta && (smallestDir == "" || dirSizes[k] < dirSizes[smallestDir]) {
-			smallestDir = k
+	requiredSpace := totalSizeRequired - totalSizeAvailable
+
+	smallest := int(^uint(0) >> 1) // Max int value
+	for _, size := range dirSizes {
+		if size >= requiredSpace && size < smallest {
+			smallest = size
 		}
 	}
-	return dirSizes[smallestDir]
+	return smallest
 }
 
 // populates the directories and files and stores the size of each directory in a map.
@@ -59,8 +61,8 @@ func initialise() {
 	}
 }
 
-// adds the size of all directories and files whose size is less than 100000 and returns the result.
-func addUnder100() int {
+// adds the size of all directories and files whose size is less than 100,000 and returns the result.
+func addUnder100K() int {
 	size := 0
 	for k := range dirSizes {
 		if dirSizes[k] < 100000 {
@@ -98,7 +100,7 @@ func traverseDirectory(dir *directory, path string) int {
 func populateDirectories() {
 	root.directories = make(map[string]*directory)
 	root.files = make(map[string]int)
-	currentDir := &directory{}
+	currentDir := &root
 	for _, line := range lines {
 		switch line[0] {
 		case '$': // command
@@ -108,7 +110,9 @@ func populateDirectories() {
 				arg := line[5:]
 				switch arg {
 				case "..":
-					currentDir = currentDir.parent
+					if currentDir.parent != nil {
+						currentDir = currentDir.parent
+					}
 				case "/":
 					currentDir = &root
 					currentDir.name = "/"
@@ -129,7 +133,10 @@ func populateDirectories() {
 		default: // file
 			re := regexp.MustCompile(`(\d+) ([a-z0-9\.]+)`)
 			matches := re.FindStringSubmatch(line)
-			size, _ := strconv.Atoi(matches[1])
+			size, err := strconv.Atoi(matches[1])
+			if err != nil {
+				log.Fatalf("failed to convert file size: %v", err)
+			}
 			name := matches[2]
 			currentDir.files[name] = size
 		}
