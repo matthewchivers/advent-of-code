@@ -14,6 +14,7 @@ func TestCalculatePartOne(t *testing.T) {
 }
 
 func TestCalculatePartTwo(t *testing.T) {
+
 	expected := 2798
 	result := partTwo()
 

@@ -10,48 +10,53 @@ var (
 	lines = aoc.ReadFileAsLines("input.txt")
 )
 
+// main is the entry point of the program.
 func main() {
+
 	log.Println("Part One Total:", partOne())
 	log.Println("Part Two Total:", partTwo())
 }
 
+// partOne calculates the total value for part one by splitting each line and finding the common character.
 func partOne() int {
 	total := 0
 	for _, line := range lines {
 		firstHalf, secondHalf := splitStringInHalf(line)
-		duplicate := getMatch(firstHalf, secondHalf)
-		total += getDupeValue(duplicate)
+		commonRune := findCommonRune(firstHalf, secondHalf)
+		total += getRuneValue(commonRune)
 	}
 	return total
 }
 
+// partTwo calculates the total value for part two by finding the common character across chunks of three lines.
 func partTwo() int {
 	totalSum := 0
-	// iterate over three lines at a time
 	for i := 0; i < len(lines); i += 3 {
-		match := getMatch(lines[i], lines[i+1], lines[i+2])
-		totalSum += getDupeValue(match)
+		commonRune := findCommonRune(lines[i], lines[i+1], lines[i+2])
+		totalSum += getRuneValue(commonRune)
 	}
 	return totalSum
 }
 
-func getDupeValue(dupe rune) int {
-	if dupe > 96 {
-		return (int(dupe) - 96)
+// getRuneValue returns the value of a given rune. Lowercase letters are 1-26, uppercase letters are 27-52.
+func getRuneValue(r rune) int {
+	if r >= 'a' && r <= 'z' {
+		return int(r - 'a' + 1)
 	}
-	return (int(dupe) - 38)
+	return int(r - 'A' + 27)
 }
 
-func getMatch(toCompare ...string) rune {
+// findCommonRune finds the first common rune across all input strings.
+func findCommonRune(toCompare ...string) rune {
 	runeCount := make(map[rune]int)
 	for _, str := range toCompare {
-		alreadyCounted := []rune{}
+		seen := make(map[rune]bool)
 		for _, r := range str {
-			if !aoc.SliceContainsRune(alreadyCounted, r) {
-				runeCount[rune(r)]++
-				alreadyCounted = append(alreadyCounted, r)
+			if !seen[r] {
+				runeCount[r]++
+				seen[r] = true
 			}
-			if runeCount[rune(r)] == len(toCompare) {
+			if runeCount[r] == len(toCompare) {
 				return r
 			}
 		}
@@ -59,6 +64,7 @@ func getMatch(toCompare ...string) rune {
 	return 0
 }
 
+// splitStringInHalf splits the given string into two equal halves.
 func splitStringInHalf(line string) (string, string) {
 	firstHalf, secondHalf := line[:len(line)/2], line[len(line)/2:]
 	return firstHalf, secondHalf
