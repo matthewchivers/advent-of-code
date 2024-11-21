@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/matthewchivers/advent-of-code/utils"
+	"github.com/matthewchivers/advent-of-code/util"
 )
 
 type Segment struct{ start, end int }
@@ -29,7 +29,7 @@ func main() {
 
 // Part One returns the answer to part one of the day's puzzle
 func partOne() int {
-	chunks := utils.ReadFileAsByteChunks("input.txt")
+	chunks := util.ReadFileAsByteChunks("input.txt")
 	seeds := getSeedRanges(chunks[0], false)
 	lowest := processSeeds(chunks, seeds)
 	return lowest
@@ -37,7 +37,7 @@ func partOne() int {
 
 // Part Two returns the answer to part two of the day's puzzle
 func partTwo() int {
-	chunks := utils.ReadFileAsByteChunks("input.txt")
+	chunks := util.ReadFileAsByteChunks("input.txt")
 	seeds := getSeedRanges(chunks[0], true)
 	lowest := processSeeds(chunks, seeds)
 	return lowest
@@ -46,7 +46,7 @@ func partTwo() int {
 // getSeedRanges returns a list of segments from the seed chunk
 func getSeedRanges(chunk []byte, series bool) SegmentList {
 	seeds := SegmentList{}
-	seedSpec, err := utils.StringToIntArray(strings.SplitN(string(chunk), ": ", 2)[1])
+	seedSpec, err := util.StringToIntArray(strings.SplitN(string(chunk), ": ", 2)[1])
 	if err != nil {
 		panic(err)
 	}
@@ -55,7 +55,7 @@ func getSeedRanges(chunk []byte, series bool) SegmentList {
 		// if series: [20, 5, 10, 4] -> 20, 21, 22, 23, 24, 10, 11, 12, 13
 		seeds = append(seeds, Segment{
 			start: seedSpec[i],
-			end:   seedSpec[i] + ((seedSpec[i+utils.BoolToInt(series)] - 1) * utils.BoolToInt(series)),
+			end:   seedSpec[i] + ((seedSpec[i+util.BoolToInt(series)] - 1) * util.BoolToInt(series)),
 		})
 		if series {
 			i++
@@ -106,7 +106,7 @@ func getStages(chunks [][]byte) []TransformationStage {
 	for i := 0; i < len(chunks); i++ {
 		stage := TransformationStage{}
 		for _, line := range strings.Split(string(chunks[i]), "\n")[1:] {
-			nums, err := utils.StringToIntArray(line)
+			nums, err := util.StringToIntArray(line)
 			if err != nil {
 				panic(err)
 			}
@@ -144,8 +144,8 @@ func (seg *Segment) applyTransformation(transformation Transformation) (SegmentL
 	}
 
 	transformedSeeds = append(transformedSeeds, Segment{
-		start: utils.MaxInt(transformation.source.start, seg.start) + transformation.alteration,
-		end:   utils.MinInt(transformation.source.end, seg.end) + transformation.alteration,
+		start: util.MaxInt(transformation.source.start, seg.start) + transformation.alteration,
+		end:   util.MinInt(transformation.source.end, seg.end) + transformation.alteration,
 	})
 
 	return transformedSeeds, remainder
@@ -178,8 +178,8 @@ func (segList *SegmentList) Merge() {
 			// if the segment overlaps with the current segment
 			if seg.start <= (*segList)[i].end+1 && seg.end >= (*segList)[i].start-1 {
 				// merge the segments
-				seg.start = utils.MinInt(seg.start, (*segList)[i].start)
-				seg.end = utils.MaxInt(seg.end, (*segList)[i].end)
+				seg.start = util.MinInt(seg.start, (*segList)[i].start)
+				seg.end = util.MaxInt(seg.end, (*segList)[i].end)
 				// remove the overlapping segment
 				*segList = append((*segList)[:i], (*segList)[i+1:]...)
 			}

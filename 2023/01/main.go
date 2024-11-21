@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/matthewchivers/advent-of-code/utils"
+	"github.com/matthewchivers/advent-of-code/util"
 )
 
 var (
@@ -31,7 +31,7 @@ func partTwo() int {
 
 func loopLinesAndChars(part int) int {
 	sum := 0
-	lines := utils.ReadFileAsLines("input.txt")
+	lines := util.ReadFileAsLines("input.txt")
 	for _, line := range lines {
 		var first, last string
 		for i, character := range line {
@@ -54,7 +54,7 @@ func loopLinesAndChars(part int) int {
 				last = string(detectedChar)
 			}
 		}
-		if integer, err := utils.StringToInt(first + last); err != nil {
+		if integer, err := util.StringToInt(first + last); err != nil {
 			fmt.Println(err)
 		} else {
 			sum += integer

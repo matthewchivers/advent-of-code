@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/matthewchivers/advent-of-code/utils"
+	"github.com/matthewchivers/advent-of-code/util"
 )
 
 type ScratchCard struct {
@@ -36,7 +36,7 @@ func partOne() int {
 		lineScore := 0
 		for _, entry := range scratchCard.entryNumbers {
 			if scratchCard.winningNumbers[entry] {
-				lineScore += utils.MaxInt(lineScore, 1)
+				lineScore += util.MaxInt(lineScore, 1)
 			}
 		}
 		score += lineScore
@@ -90,7 +90,7 @@ func parseLine(line string) (map[string]bool, []string) {
 }
 
 func getInventory() map[int]*ScratchCard {
-	lines := utils.ReadFileAsLines("input.txt")
+	lines := util.ReadFileAsLines("input.txt")
 	inv := make(map[int]*ScratchCard)
 	for i, line := range lines {
 		// i + 1 because the card numbers start at 1

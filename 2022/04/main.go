@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
-	aoc "github.com/matthewchivers/advent-of-code/utils"
+	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
 var (

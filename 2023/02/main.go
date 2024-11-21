@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/matthewchivers/advent-of-code/utils"
+	"github.com/matthewchivers/advent-of-code/util"
 )
 
 // GameResult is a struct to hold the results of a game
@@ -28,7 +28,7 @@ func main() {
 // Add all GameIDs that have a red, green and blue value less than or equal to the gameMax
 func partOne() int {
 	sum := 0
-	lines := utils.ReadFileAsLines("input.txt")
+	lines := util.ReadFileAsLines("input.txt")
 	for i, line := range lines {
 		gameRes := processGameLine(line)
 		if gameRes.red <= gameMax.red && gameRes.green <= gameMax.green && gameRes.blue <= gameMax.blue {
@@ -42,7 +42,7 @@ func partOne() int {
 // Add all the power sets of red, green and blue for each game
 func partTwo() int {
 	sum := 0
-	lines := utils.ReadFileAsLines("input.txt")
+	lines := util.ReadFileAsLines("input.txt")
 	for _, line := range lines {
 		gameRes := processGameLine(line)
 		sum += gameRes.red * gameRes.green * gameRes.blue
@@ -64,18 +64,18 @@ func processGameLine(line string) GameResult {
 		ballSet := strings.Split(strings.TrimSpace(draw), ", ")
 		for _, colourGroup := range ballSet {
 			colourCount := strings.Split(colourGroup, " ")
-			number, err := utils.StringToInt(colourCount[0])
+			number, err := util.StringToInt(colourCount[0])
 			if err != nil {
 				fmt.Println(err)
 			}
 			colour := colourCount[1]
 			switch colour {
 			case "red":
-				gameRes.red = utils.MaxInt(gameRes.red, number)
+				gameRes.red = util.MaxInt(gameRes.red, number)
 			case "green":
-				gameRes.green = utils.MaxInt(gameRes.green, number)
+				gameRes.green = util.MaxInt(gameRes.green, number)
 			case "blue":
-				gameRes.blue = utils.MaxInt(gameRes.blue, number)
+				gameRes.blue = util.MaxInt(gameRes.blue, number)
 			}
 		}
 	}
