@@ -1,6 +1,6 @@
 # Advent of Code 2022 Solutions 🎄✨
 
-Welcome to my Advent of Code 2022 directory! This is where I tackled the puzzles from 2022, with each day bringing its own coding challenge. Here you'll find how I approached each one.
+Welcome to my [Advent of Code 2022](https://adventofcode.com/2022/) directory! This is where I tackled the puzzles from 2022, with each day bringing its own coding challenge. Here you'll find how I approached each one.
 
 ## What's Inside?
 
