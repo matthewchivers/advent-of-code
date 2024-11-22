@@ -14,6 +14,7 @@ I've partially completed 2022 and 2023, and I'm looking forward to tackling the 
 
 - [**2022 Solutions**](./2022/)
 - [**2023 Solutions**](./2023/)
+- [**2024 Solutions**](./2024/)
 
 ## Running the Solutions
 
