@@ -117,8 +117,13 @@ README_CONTENT="# Advent of Code $YEAR - Day $DAY
 ## Part Two
 "
 
+MAKEFILE_CONTENT="# Inherit from parent makefile to enable common tasks
+include ../../Makefile
+"
+
 # Create the files
 create_file "$TARGET_DIR/main.go" "$MAIN_GO_CONTENT"
 create_file "$TARGET_DIR/main_test.go" "$MAIN_TEST_GO_CONTENT"
 create_file "$TARGET_DIR/input.txt" ""
 create_file "$TARGET_DIR/README.md" "$README_CONTENT"
+create_file "$TARGET_DIR/Makefile" "$MAKEFILE_CONTENT"
