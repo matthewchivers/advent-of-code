@@ -30,7 +30,7 @@ test-day:
 #   - Running from a specific day will run only that day
 benchmark:
 	@echo "Running all benchmarks..."
-	@go test -bench=. ./...
+	@go test -bench=. $(shell go list ./... | grep -v $(EXCLUDE_DIR))
 
 # Run benchmarks for a specific year
 # Must be run from the root directory
