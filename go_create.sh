@@ -10,9 +10,9 @@ fi
 
 YEAR=$1
 DAY=$2
-# strip leading zeros from DAY (sanitise user input)
+# Strip leading zeros from DAY (sanitise user input)
 DAY=$(echo $DAY | sed 's/^0*//')
-DAYPADDED=$(printf "%02d" $DAY) # ironically, this will add leading zeros back in for usage in the directory name
+DAYPADDED=$(printf "%02d" $DAY) # Add leading zeros for usage in the directory name
 
 # Base directory (default to current directory if not provided)
 BASE_DIR=${3:-.}
@@ -28,102 +28,24 @@ else
     echo "Created directory $TARGET_DIR."
 fi
 
-# Function to create or append to a file if it doesn't exist
-create_file() {
-    local file_path=$1
-    local content=$2
-    if [ ! -f "$file_path" ]; then
-        echo -e "$content" > "$file_path"
-        echo "Created $file_path."
+# Function to create (not overwrite) a file from a template
+create_from_template() {
+    local template_path=$1
+    local target_path=$2
+
+    if [ -f "$target_path" ]; then
+        echo "$target_path already exists, leaving it unchanged."
     else
-        echo "$file_path already exists, leaving it unchanged."
+        sed "s/{{YEAR}}/$YEAR/g; s/{{DAY}}/$DAY/g; s/{{DAYPADDED}}/$DAYPADDED/g" "$template_path" > "$target_path"
+        echo "Created $target_path from $template_path."
     fi
 }
 
-# Content for main.go
-MAIN_GO_CONTENT="package main
+TEMPLATE_DIR="./templates"
 
-import (
-    \"fmt\"
-    aoc \"github.com/matthewchivers/advent-of-code/util\"
-)
-
-var (
-	lines = aoc.ReadFileAsLines(\"input.txt\")
-)
-
-func main() {
-    fmt.Println(\"Hello, advent of code $YEAR - Day $DAY!\")
-	fmt.Println(\"Part one:\", partOne())
-	fmt.Println(\"Part two:\", partTwo())
-}
-
-func partOne() int{
-    fmt.Println(\"Part one not implemented\")
-    return 0
-}
-
-func partTwo() int {
-    fmt.Println(\"Part two not implemented\")
-    return 0
-}
-"
-
-# Content for main_test.go
-MAIN_TEST_GO_CONTENT="package main
-
-import (
-	\"testing\"
-
-	\"github.com/stretchr/testify/assert\"
-)
-
-func TestPartOne(t *testing.T) {
-    t.Error(\"$YEAR Day $DAY TestPartOne not implemented\")
-	
-	expected := 0
-    result := partOne()
-	assert.Equal(t, expected, result, \"partOne() should return the correct value\")
-}
-
-func TestPartTwo(t *testing.T) {
-	t.Error(\"$YEAR Day $DAY TestPartTwo not implemented\")
-
-    expected := 0
-    result := partTwo()
-	assert.Equal(t, expected, result, \"partTwo() should return the correct value\")
-}
-
-func BenchmarkPartOne(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		partOne()
-	}
-}
-
-func BenchmarkPartTwo(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		partTwo()
-	}
-}
-"
-
-# Content for README.md
-README_CONTENT="# Advent of Code $YEAR - Day $DAY
-
-[Link to the challenge](https://adventofcode.com/$YEAR/day/$DAY)
-
-## Part One
-
-## Part Two
-"
-
-MAKEFILE_CONTENT="# Inherit from parent makefile to enable common tasks
-include ../../Makefile
-"
-
-# Create the files
-create_file "$TARGET_DIR/main.go" "$MAIN_GO_CONTENT"
-create_file "$TARGET_DIR/main_test.go" "$MAIN_TEST_GO_CONTENT"
-create_file "$TARGET_DIR/input.txt" ""
-create_file "$TARGET_DIR/README.md" "$README_CONTENT"
-create_file "$TARGET_DIR/Makefile" "$MAKEFILE_CONTENT"
+create_from_template "$TEMPLATE_DIR/main.go" "$TARGET_DIR/main.go"
+create_from_template "$TEMPLATE_DIR/main_test.go" "$TARGET_DIR/main_test.go"
+create_from_template "$TEMPLATE_DIR/README.md" "$TARGET_DIR/README.md"
+create_from_template "$TEMPLATE_DIR/Makefile" "$TARGET_DIR/Makefile"
+touch "$TARGET_DIR/input.txt"
+echo "Created $TARGET_DIR/input.txt."
