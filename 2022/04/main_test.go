@@ -19,3 +19,15 @@ func TestCalculatePartTwo(t *testing.T) {
 
 	assert.Equal(t, expected, result, "solvePart(2) should return the correct total value")
 }
+
+func BenchmarkPartOne(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		partOne()
+	}
+}
+
+func BenchmarkPartTwo(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		partTwo()
+	}
+}
