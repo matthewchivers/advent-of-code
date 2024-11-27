@@ -2,13 +2,15 @@
 
 .PHONY: test test-year test-day benchmark benchmark-year benchmark-day
 
+EXCLUDE_DIR := "advent-of-code/templates"
+
 # Run tests for the entire directory
 # The directory context is sensitive: 
 #   - Running from root will run all years
 #   - Running from a specific day will run only that day
 test:
 	@echo "Running all tests..."
-	@go test ./...
+	@go test $(shell go list ./... | grep -v $(EXCLUDE_DIR))
 
 # Run tests for a specific year (e.g., make test-year YEAR=2020)
 # Must be run from the root directory
