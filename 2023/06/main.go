@@ -8,58 +8,79 @@ import (
 	"github.com/matthewchivers/advent-of-code/util"
 )
 
+var (
+	lines = util.ReadFileAsLines("input.txt")
+)
+
 func main() {
-	fmt.Println("Hello, advent of code 2023 - Day 6!")
+	fmt.Println("Hello, Advent of Code 2023 - Day 6!")
+
 	fmt.Println("Part one:", partOne())
 	fmt.Println("Part two:", partTwo())
 }
 
-type Race struct{ Time, Distance int }
+type Race struct {
+	Time, Distance int
+}
 
-// Part One returns the answer to part one of the day's puzzle
+// partOne calculates the total number of ways to win all races combined
 func partOne() int {
-	lines := util.ReadFileAsLines("input.txt")
 	races, err := parseRaces(lines[0], lines[1], false)
 	if err != nil {
 		panic(err)
 	}
 	totalWays := 1
 	for _, race := range races {
-		totalWays *= calculateWins(race)
+		totalWays *= calculateWinningWays(race)
+		if totalWays == 0 {
+			break // Exit early if no ways to win exist
+		}
 	}
 	return totalWays
 }
 
-// Part Two returns the answer to part two of the day's puzzle
+// partTwo calculates the number of ways to win a single combined race
 func partTwo() int {
-	lines := util.ReadFileAsLines("input.txt")
 	races, err := parseRaces(lines[0], lines[1], true)
 	if err != nil {
 		panic(err)
 	}
-	race := races[0]
-	return calculateWins(race)
+	return calculateWinningWays(races[0])
 }
 
-func calculateWins(race Race) int {
-	// return quadraticWins(race)
-	return bruteForceWins(race)
+// calculateWinningWays calculates the number of ways to win a given race using a quadratic equation
+func calculateWinningWays(race Race) int {
+	return quadraticSolution(race)
 }
 
-func quadraticWins(race Race) int {
-	// Quadratic formula : t = (-b +- sqrt(b^2 - 4ac)) / 2a
-	a := -1
-	b := race.Time
-	c := -race.Distance
+// quadraticSolution solves the quadratic equation to determine the number of valid winning times
+func quadraticSolution(race Race) int {
+	// Quadratic formula: t = (-b ± sqrt(b^2 - 4ac)) / 2a
+	// with t being the time to hold the button
+	// t_1 (root 1) = (-b + sqrt(b^2 - 4ac)) / 2a
+	// t_2 (root 2) = (-b - sqrt(b^2 - 4ac)) / 2a
 
+	// Solving: t * (T - t) > Distance
+	// Equivalent to: t^2 - tT - Distance > 0
+	// t = time to hold the button
+	//   also millimetres per millisecond speed (mm/ms)
+	// T = total race time allowed
+	// Distance = distance to beat
+
+	// Coefficients of the quadratic equation
+	a := 1             // Coefficient of t (where t^2 = 1t^2)
+	b := -race.Time    // -T = Coefficient of t (-tT)
+	c := race.Distance // Constant term (D = Distance to beat)
+
+	// b^2 - 4ac
 	discriminant := b*b - 4*a*c
 
-	// Check for non-negative discriminant
+	// No valid solutions if discriminant is negative
 	if discriminant < 0 {
 		return 0
 	}
 
-	// Calculating roots
+	// Calculate roots of the equation
 	sqrtDisc := math.Sqrt(float64(discriminant))
 	root1 := (float64(-b) + sqrtDisc) / (2 * float64(a))
 	root2 := (float64(-b) - sqrtDisc) / (2 * float64(a))
@@ -69,41 +90,27 @@ func quadraticWins(race Race) int {
 		root1, root2 = root2, root1
 	}
 
-	// Count integer solutions within the range
+	// Calculate the range of valid integer solutions
 	start := int(math.Ceil(root1))
 	end := int(math.Floor(root2))
-	count := 0
-	for t := start; t <= end; t++ {
-		if t >= 0 && t <= race.Time {
-			count++
-		}
+
+	// Return 0 if no valid range exists
+	if start > end || start > race.Time {
+		return 0
 	}
-	return count
+
+	return end - start + 1
 }
 
-func bruteForceWins(race Race) int {
-	// Bruteforce
-	waysToWin := 0
-	winTriggered := false
-
-	for t := 0; t < race.Time; t++ {
-		// distance travelled = t * (T - t) (where T is the time limit and t is the time the button is held down
-		if distance := t * (race.Time - t); distance > race.Distance {
-			waysToWin++
-		} else if winTriggered {
-			break
-		}
-	}
-	return waysToWin
-}
-
+// parseRaces converts input strings to Race structs
 func parseRaces(times, distances string, stripSpaces bool) ([]Race, error) {
-	timeString := strings.SplitN(times, ":", -1)[1]
-	distanceString := strings.SplitN(distances, ":", -1)[1]
+	timeString := strings.SplitN(times, ":", 2)[1]
+	distanceString := strings.SplitN(distances, ":", 2)[1]
 	if stripSpaces {
 		timeString = strings.ReplaceAll(timeString, " ", "")
 		distanceString = strings.ReplaceAll(distanceString, " ", "")
 	}
+
 	timeVals, err := util.StringToIntArray(timeString)
 	if err != nil {
 		return nil, err
@@ -112,15 +119,13 @@ func parseRaces(times, distances string, stripSpaces bool) ([]Race, error) {
 	if err != nil {
 		return nil, err
 	}
-	races := []Race{}
-	for i := 0; i < len(timeVals); i++ {
-		time := timeVals[i]
-		distance := distanceVals[i]
 
-		races = append(races, Race{
-			Time:     time,
-			Distance: distance,
-		})
+	races := make([]Race, len(timeVals))
+	for i := range timeVals {
+		races[i] = Race{
+			Time:     timeVals[i],
+			Distance: distanceVals[i],
+		}
 	}
 	return races, nil
 }
