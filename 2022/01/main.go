@@ -7,9 +7,7 @@ import (
 )
 
 var (
-	podium    Podium   // Holds the top three calorie counts
-	populated bool     // Tracks if the podium has been populated
-	lines     []string // Holds the lines from input.txt
+	lines []string = aoc.ReadFileAsLines("input.txt")
 )
 
 func main() {
@@ -20,33 +18,23 @@ func main() {
 
 // calculatePartOne calculates and returns the highest number of calories being carried by a single elf.
 func calculatePartOne() int {
-	populatePodium(lines)
+	podium := populatePodium(lines)
 	return podium.Highest()
 }
 
 // calculatePartTwo calculates and returns the total number of calories carried by the top three elves.
 func calculatePartTwo() int {
-	populatePodium(lines)
+	podium := populatePodium(lines)
 	return podium.Total()
 }
 
 // populatePodium populates the Podium struct with calorie totals for each elf.
-// This function reads the input file and processes each line, summing up calorie counts for each elf
+// This function reads the input lines and processes each line, summing up calorie counts for each elf
 // and adding them to the Podium.
-func populatePodium(lines []string) {
-	// Prevent re-processing if the podium is already populated
-	// (e.g. if part one has already run and we're now on part two)
-	if populated {
-		return
-	}
-
-	// Read input lines if they haven't been loaded yet
-	if len(lines) == 0 {
-		lines = aoc.ReadFileAsLines("input.txt")
-	}
-
-	// Track current calorie count for each elf
+func populatePodium(lines []string) Podium {
+	podium := Podium{}
 	currentCaloriesHeld := 0
+
 	for _, line := range lines {
 		if line != "" {
 			// Convert the line to an integer representing calories
@@ -61,8 +49,10 @@ func populatePodium(lines []string) {
 			currentCaloriesHeld = 0
 		}
 	}
-	// Mark the podium as populated to prevent redundant processing
-	populated = true
+	// Handle the last elf if there's no trailing empty line
+	podium.Insert(currentCaloriesHeld)
+
+	return podium
 }
 
 // Podium stores the top three highest calorie counts among all elves
