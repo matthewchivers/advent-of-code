@@ -8,9 +8,9 @@ import (
 
 func TestCalculatePartOne(t *testing.T) {
 	// Reset the podium and populated flag before each test
-	podium = Podium{}
-	populated = false
-	lines = nil // Ensure lines are loaded from the file
+	// podium = Podium{}
+	// populated = false
+	// lines = nil // Ensure lines are loaded from the file
 
 	expected := 71780
 	result := calculatePartOne()
@@ -20,12 +20,24 @@ func TestCalculatePartOne(t *testing.T) {
 
 func TestCalculatePartTwo(t *testing.T) {
 	// Reset the podium and populated flag before each test
-	podium = Podium{}
-	populated = false
-	lines = nil // Ensure lines are loaded from the file
+	// podium = Podium{}
+	// populated = false
+	// lines = nil // Ensure lines are loaded from the file
 
 	expected := 212489
 	result := calculatePartTwo()
 
 	assert.Equal(t, expected, result, "calculatePartTwo should return the correct total value")
+}
+
+func BenchmarkPartOne(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		calculatePartOne()
+	}
+}
+
+func BenchmarkPartTwo(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		calculatePartTwo()
+	}
 }
