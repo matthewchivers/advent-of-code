@@ -35,3 +35,21 @@ jobs:
       run: |
         echo "Running all tests..."
         go test $(go list ./... | grep -v "$EXCLUDE_DIR")
+
+    - name: Lint
+      run: |
+        echo "Installing golangci-lint..."
+        go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+    
+        echo "Filtering directories with Go files..."
+        DIRECTORIES=$(find . -type f -name '*.go' -not -path './templates/*' -exec dirname {} \; | sort -u)
+    
+        echo "Running golangci-lint on the following directories:"
+        echo "$DIRECTORIES"
+    
+        if [ -n "$DIRECTORIES" ]; then
+          golangci-lint run $DIRECTORIES
+        else
+          echo "No Go files found for linting."
+          exit 0
+        fi
