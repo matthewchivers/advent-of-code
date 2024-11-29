@@ -1,0 +1,22 @@
+# Configuration file for golangci-lint
+run:
+    timeout: 2m
+    modules-download-mode: readonly # Avoid modifying go.mod and go.sum
+  
+linters:
+    enable:
+    - govet          # Go's vet tool for finding issues
+    - errcheck       # Check for unhandled errors
+    - staticcheck    # Advanced vetting, linting, and code analysis
+    - gosimple       # Simplify your code
+    - unused         # Checks for unused code (functions, variables, etc.)
+    - ineffassign    # Detect ineffective assignments
+    - typecheck      # Check for type errors (requires go type info)
+    
+linters-settings:
+    errcheck:
+      excluded-functions:
+        - fmt.Printf
+        - fmt.Errorf
+        - fmt.Fprintln
+  
