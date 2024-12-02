@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // ReadFileAsLines reads a file line by line and returns a slice of strings
@@ -79,4 +81,16 @@ func ReadFileAsRuneMatrix(fileName string) [][]rune {
 		newMatrix = append(newMatrix, row)
 	}
 	return newMatrix
+}
+
+func ParseIntList(line string, sep string) ([]int, error) {
+	var nums []int
+	for _, num := range strings.Split(line, sep) {
+		n, err := strconv.Atoi(num)
+		if err != nil {
+			return nil, err
+		}
+		nums = append(nums, n)
+	}
+	return nums, nil
 }
