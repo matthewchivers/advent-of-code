@@ -13,9 +13,7 @@ func TestPartOne(t *testing.T) {
 }
 
 func TestPartTwo(t *testing.T) {
-	t.Error("2024 Day 2 TestPartTwo not implemented")
-
-	expected := 0
+	expected := 674
 	result := partTwo()
 	assert.Equal(t, expected, result, "partTwo() should return the correct value")
 }

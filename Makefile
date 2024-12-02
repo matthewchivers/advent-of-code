@@ -42,6 +42,10 @@ benchmark: lint
 	@echo "Running all benchmarks..."
 	@go test -bench=. $(shell go list ./... | grep -v $(EXCLUDE_DIR))
 
+benchmark-30: lint
+	@echo "Running all benchmarks with 30s benchtime..."
+	@go test -bench=. $(shell go list ./... | grep -v $(EXCLUDE_DIR)) -benchtime=30s
+
 # Run benchmarks for a specific year
 # Must be run from the root directory
 benchmark-year: lint
