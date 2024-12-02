@@ -19,9 +19,6 @@ func main() {
 	fmt.Println("Part two:", partTwo())
 }
 
-// partOne counts how many reports have levels that are consistently increasing or decreasing,
-// with consecutive differences between 1 and 3.
-
 // partOne counts how many reports are safe (adhere to rules)
 func partOne() int {
 	return countSafe(lines, isReportSafe)
