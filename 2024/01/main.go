@@ -9,9 +9,7 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
-var (
-	lines = aoc.ReadFileAsLines("input.txt")
-)
+var lines = aoc.ReadFileAsLines("input.txt")
 
 func main() {
 	fmt.Println("Hello, advent of code 2024 - Day 1!")
@@ -21,78 +19,56 @@ func main() {
 
 // partOne calculates the total distance between paired location IDs from two lists
 func partOne() int {
-	listA := []int{}
-	listB := []int{}
-
-	// Parse the input lines to populate listA and listB
-	for _, line := range lines {
-		parts := strings.Split(line, "   ")
-		intA, err := aoc.StringToInt(parts[0])
-		if err != nil {
-			fmt.Println("Error converting string to int")
-			return 0
-		}
-		listA = append(listA, intA)
-		intB, err := aoc.StringToInt(parts[1])
-		if err != nil {
-			fmt.Println("Error converting string to int")
-			return 0
-		}
-		listB = append(listB, intB)
-	}
-
-	// Sort both lists to ensure proper pairing of elements
+	listA, listB := parseLists()
 	slices.Sort(listA)
 	slices.Sort(listB)
 
-	countDiff := 0
-	// Calculate the absolute difference for each pair and add to the total
-	for i := 0; i < len(listA); i++ {
-		diff := listA[i] - listB[i]
-		if diff < 0 {
-			diff = -diff
-		}
-		countDiff += diff
+	totalDiff := 0
+	for i := range listA {
+		totalDiff += abs(listA[i] - listB[i])
 	}
-	return countDiff
+	return totalDiff
 }
 
 // partTwo calculates a similarity score based on occurrences of shared location IDs
 func partTwo() int {
-	listB := []int{}
-	occurences := map[int]int{}
+	occurrences := map[int]int{}
+	listA, listB := parseLists()
 
-	// Parse the input lines to populate occurrences and listB
+	for _, intA := range listA {
+		occurrences[intA] = 0
+	}
+
+	total := 0
+	for _, num := range listB {
+		if _, ok := occurrences[num]; ok {
+			occurrences[num]++
+		}
+	}
+
+	for k, v := range occurrences {
+		total += k * v
+	}
+	return total
+}
+
+// parseLists extracts two lists of integers from input lines
+func parseLists() ([]int, []int) {
+	listA, listB := []int{}, []int{}
 	for _, line := range lines {
 		parts := strings.Split(line, "   ")
-		intA, err := aoc.StringToInt(parts[0])
-		if err != nil {
-			fmt.Println("Error converting string to int")
-			return 0
-		}
-		occurences[intA] = 0
-
-		intB, err := aoc.StringToInt(parts[1])
-		if err != nil {
-			fmt.Println("Error converting string to int")
-			return 0
-		}
+		intA, _ := aoc.StringToInt(parts[0])
+		intB, _ := aoc.StringToInt(parts[1])
+		listA = append(listA, intA)
 		listB = append(listB, intB)
 	}
+	return listA, listB
+}
 
-	// Count the occurrences of numbers in listB that also appear in the occurrences map
-	for _, num := range listB {
-		_, ok := occurences[num]
-		if ok {
-			occurences[num]++
-		}
+// abs returns the absolute value of an integer
+func abs(x int) int {
+	if x < 0 {
+		return -x
 	}
-
-	rangeTotal := 0
-	// Calculate the similarity score by multiplying each unique value by its frequency
-	for k, v := range occurences {
-		rangeTotal += k * v
-	}
-
-	return rangeTotal
+	return x
 }
