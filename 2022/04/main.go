@@ -9,31 +9,28 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
-var (
-	lines = aoc.ReadFileAsLines("input.txt")
-)
-
 func main() {
+	lines := aoc.ReadFileAsLines("input.txt")
 	// Solve and print the results for both parts of Day 4: Camp Cleanup
-	log.Printf("Part One Total: %d", partOne())
-	log.Printf("Part Two Total: %d", partTwo())
+	log.Printf("Part One Total: %d", partOne(lines))
+	log.Printf("Part Two Total: %d", partTwo(lines))
 }
 
 // partOne solves Part 1 of the Day 4 challenge by counting the number of times one range fully encompasses the other.
-func partOne() int {
-	return countMatchingRanges(isEncompassed)
+func partOne(input []string) int {
+	return countMatchingRanges(input, isEncompassed)
 }
 
 // partTwo solves Part 2 of the Day 4 challenge by counting the number of times the ranges overlap.
-func partTwo() int {
-	return countMatchingRanges(isOverlapping)
+func partTwo(input []string) int {
+	return countMatchingRanges(input, isOverlapping)
 }
 
 // countMatchingRanges iterates over each line of input, extracting ranges and applying the given condition function.
 // The conditionFunc determines which ranges are counted.
-func countMatchingRanges(conditionFunc func([]int, []int) bool) int {
+func countMatchingRanges(input []string, conditionFunc func([]int, []int) bool) int {
 	count := 0
-	for _, line := range lines {
+	for _, line := range input {
 		rangeOne, rangeTwo, err := getRanges(line)
 		if err != nil {
 			continue

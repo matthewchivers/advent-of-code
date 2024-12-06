@@ -17,18 +17,16 @@ type coord struct {
 }
 
 func main() {
+	matrix := util.ReadFileAsRuneMatrix("input.txt")
 	fmt.Println("Hello, advent of code 2023 - Day 3!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(matrix))
+	fmt.Println("Part two:", partTwo(matrix))
 }
 
 // partOne returns the answer to part one of the day's puzzle
 // The puzzle is to find the sum of all numbers that have a symbol adjacent to them
-func partOne() int {
-	matrix := util.ReadFileAsRuneMatrix("input.txt")
-
+func partOne(matrix [][]rune) int {
 	sum := 0
-
 	for y := 0; y < len(matrix); y++ {
 		numberBuffer := ""
 		includeNumber := false
@@ -54,11 +52,8 @@ func partOne() int {
 
 // partTwo returns the answer to part two of the day's puzzle
 // The puzzle is to add the powers of two numbers that are adjacent to the same gear
-func partTwo() int {
-	matrix := util.ReadFileAsRuneMatrix("input.txt")
-
+func partTwo(matrix [][]rune) int {
 	sum := 0
-
 	gearMap := map[coord][]int{}
 	for y := 0; y < len(matrix); y++ {
 		numberBuffer := ""

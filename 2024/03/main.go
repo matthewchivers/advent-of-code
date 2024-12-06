@@ -32,30 +32,29 @@ const (
 const maxNumLength = 3 // Maximum length for numbers being parsed
 
 func main() {
-	fmt.Println("Part One:", partOne())
-	fmt.Println("Part Two:", partTwo())
-}
-
-// partOne solves the first part of the puzzle by scanning the corrupted memory
-// and summing up all valid `mul` instructions without considering any conditional statements.
-func partOne() int {
-	return solve(false)
-}
-
-// partTwo solves the second part of the puzzle by handling additional `do()` and `don't()`
-// instructions, which enable or disable subsequent `mul` operations, respectively.
-func partTwo() int {
-	return solve(true)
-}
-
-func solve(handleDoDont bool) int {
 	f, err := os.Open("input.txt")
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
 	r := bufio.NewReader(f)
+	fmt.Println("Part One:", partOne(r))
+	fmt.Println("Part Two:", partTwo(r))
+}
 
+// partOne solves the first part of the puzzle by scanning the corrupted memory
+// and summing up all valid `mul` instructions without considering any conditional statements.
+func partOne(r *bufio.Reader) int {
+	return solve(r, false)
+}
+
+// partTwo solves the second part of the puzzle by handling additional `do()` and `don't()`
+// instructions, which enable or disable subsequent `mul` operations, respectively.
+func partTwo(r *bufio.Reader) int {
+	return solve(r, true)
+}
+
+func solve(r *bufio.Reader, handleDoDont bool) int {
 	var (
 		sum        int
 		enabled    = true
@@ -73,6 +72,7 @@ func solve(handleDoDont bool) int {
 		if err != nil {
 			panic(err)
 		}
+		fmt.Printf("State: %v, Rune: %c\n", state, rn)
 
 		switch state {
 		case stateScan:

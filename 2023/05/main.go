@@ -23,28 +23,27 @@ type TransformationStage struct {
 }
 
 func main() {
+	chunks := util.ReadFileAsByteChunks("input.txt")
 	fmt.Println("Hello, advent of code 2023 - Day 5!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(chunks))
+	fmt.Println("Part two:", partTwo(chunks))
 }
 
 // Part One reads the initial seed numbers from the input file and converts them through a sequence
 // of transformations (seed-to-soil, soil-to-fertiliser, etc.) based on the given almanac rules.
 // It finds the lowest final location number after all transformations are applied.
-func partOne() int {
-	chunks := util.ReadFileAsByteChunks("input.txt")
-	seeds := getSeedRanges(chunks[0], false)
-	lowest := processSeeds(chunks, seeds)
+func partOne(input [][]byte) int {
+	seeds := getSeedRanges(input[0], false)
+	lowest := processSeeds(input, seeds)
 	return lowest
 }
 
 // In Part Two, the input represents ranges of seeds rather than individual numbers.
 // Transforms these ranges them through similar transformations to Part One, and then
 // finds the lowest resulting location number.
-func partTwo() int {
-	chunks := util.ReadFileAsByteChunks("input.txt")
-	seeds := getSeedRanges(chunks[0], true)
-	lowest := processSeeds(chunks, seeds)
+func partTwo(input [][]byte) int {
+	seeds := getSeedRanges(input[0], true)
+	lowest := processSeeds(input, seeds)
 	return lowest
 }
 

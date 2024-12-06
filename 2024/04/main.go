@@ -7,7 +7,6 @@ import (
 )
 
 var (
-	lines      = aoc.ReadFileAsLines("input.txt")
 	directions = []struct {
 		dx, dy int
 	}{
@@ -18,17 +17,18 @@ var (
 )
 
 func main() {
+	lines := aoc.ReadFileAsLines("input.txt")
 	fmt.Println("Hello, advent of code 2024 - Day 4!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(lines))
+	fmt.Println("Part two:", partTwo(lines))
 }
 
 // partOne searches for occurrences of the word "XMAS" in the grid in all possible directions.
 // It counts (and returns) the number of times the word appears.
-func partOne() int {
+func partOne(input []string) int {
 	word := "XMAS"
 	count := 0
-	grid := lines
+	grid := input
 	// Loop over each position in the grid.
 	for y := 0; y < len(grid); y++ {
 		for x := 0; x < len(grid[y]); x++ {
@@ -48,8 +48,8 @@ func partOne() int {
 // partTwo checks for the specific pattern "A" surrounded by "MAS" or "SAM" diagonally in the grid.
 // It's an "X-MAS" (MAS/SAM in an X shape) pattern. "of course".
 // partTwo counts (and returns) the number of times such a pattern is found.
-func partTwo() int {
-	grid := lines
+func partTwo(input []string) int {
+	grid := input
 	count := 0
 	// Loop over each position in the grid.
 	for y := 0; y < len(grid); y++ {
