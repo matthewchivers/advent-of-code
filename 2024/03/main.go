@@ -3,152 +3,216 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
+	"strconv"
 	"strings"
-
-	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
+type parseState int
+
+// Define the different states of the state machine used for parsing
+const (
+	stateScan          parseState = iota // Initial state, scanning for instructions
+	stateM                               // Found 'm', possibly start of 'mul'
+	stateMu                              // Found 'mu', possibly start of 'mul'
+	stateMul                             // Found 'mul', expecting '(' next
+	stateMulOpenParen                    // Found 'mul(', expecting first number
+	stateMulNumber1                      // Parsing the first number of 'mul(x, y)'
+	stateMulComma                        // Found ',', expecting second number
+	stateMulNumber2                      // Parsing the second number of 'mul(x, y)'
+	stateD                               // Found 'd', possibly start of 'do' or 'don't'
+	stateDo                              // Found 'do', expecting '(' next
+	stateDoOpenParen                     // Found 'do(', enabling future multiplications
+	stateDon                             // Found 'don', possibly start of 'don't'
+	stateDont                            // Found 'don't', expecting '(' next
+	stateDontOpenParen                   // Found 'don't(', disabling future multiplications
+)
+
+const maxNumLength = 3 // Maximum length for numbers being parsed
+
 func main() {
-	fmt.Println("Hello, advent of code 2024 - Day 3!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part One:", partOne())
+	fmt.Println("Part Two:", partTwo())
 }
 
+// partOne solves the first part of the puzzle by scanning the corrupted memory
+// and summing up all valid `mul` instructions without considering any conditional statements.
 func partOne() int {
-	return processInput(true)
+	return solve(false)
 }
 
+// partTwo solves the second part of the puzzle by handling additional `do()` and `don't()`
+// instructions, which enable or disable subsequent `mul` operations, respectively.
 func partTwo() int {
-	return processInput(false)
+	return solve(true)
 }
 
-func processInput(isPartOne bool) int {
-	file, err := os.Open("input.txt")
+func solve(handleDoDont bool) int {
+	f, err := os.Open("input.txt")
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
+	defer f.Close()
+	r := bufio.NewReader(f)
 
-	reader := bufio.NewReader(file)
-	var buffer strings.Builder
+	var (
+		sum        int
+		enabled    = true
+		numBuffer  strings.Builder
+		num1, num2 int
+	)
 
-	// define valid commands
-	mulCommand := []byte("mul")
-	doCommand := []byte("do")
-	dontCommand := []byte("don't")
-
-	num1 := 0  // first number for multiplication
-	num2 := 0  // second number for multiplication
-	total := 0 // accumulator for the sum of products
-
-	multiply := true // keeps track of whether `mul` commands are active
-
-	// state machine:
-	// 0 - searching for command letters and opening bracket
-	// 1 - reading numbers between brackets for multiplication
-	// 2 - processing `do()` command - turns on multiplication
-	// 3 - processing `don't()` command - turns off multiplication
-	state := 0 // initial state for command parsing
+	state := stateScan // Start in the scanning state
 
 	for {
+		rn, _, err := r.ReadRune()
+		if err == io.EOF {
+			break // Exit loop when end of file is reached
+		}
+		if err != nil {
+			panic(err)
+		}
+
 		switch state {
-		case 0:
-			char, err := reader.ReadByte()
-			if err != nil {
-				return total // end of file
-			}
-			// detect letters of a valid command (`mul`, `do`, `don't`)
-			if (buffer.Len() < len(mulCommand) && char == mulCommand[buffer.Len()]) ||
-				(buffer.Len() < len(doCommand) && char == doCommand[buffer.Len()]) ||
-				(buffer.Len() < len(dontCommand) && char == dontCommand[buffer.Len()]) {
-				buffer.WriteByte(char)
-				continue
-			}
-			// if opening bracket is detected, check command and transition state
-			if char == '(' {
-				if buffer.String() == string(mulCommand) {
-					// only proceed with multiplication if it's enabled
-					if multiply {
-						state = 1
-						buffer.Reset()
-						continue
-					}
-				}
-				if isPartOne {
-					// just do part one
-					state = 0
-					buffer.Reset()
-					continue
-				}
-				// handle `do` and `don't` commands
-				if buffer.String() == string(doCommand) {
-					state = 2
-				} else if buffer.String() == string(dontCommand) {
-					state = 3
+		case stateScan:
+			switch rn {
+			case 'm':
+				// Found 'm', could be the start of 'mul'
+				state = stateM
+			case 'd':
+				// Found 'd', could be the start of 'do' or 'don't'
+				if handleDoDont {
+					state = stateD
 				}
 			}
-			// reset the buffer before transitioning to the next command
-			// or if unexpected character is found
-			buffer.Reset()
-		case 1: // `mul` - read numbers between brackets
-			char, err := reader.ReadByte()
-			if err != nil {
-				return total // end of file
+		case stateM:
+			if rn == 'u' {
+				// Found 'mu', could be the start of 'mul'
+				state = stateMu
+			} else {
+				state = stateScan
 			}
-			// collect digits for the number
-			if char >= '0' && char <= '9' {
-				buffer.WriteByte(char)
-				continue
+		case stateMu:
+			if rn == 'l' {
+				// Found 'mul', expecting '(' next
+				state = stateMul
+			} else {
+				state = stateScan
 			}
-			// if comma is found, store the first number
-			if char == ',' {
-				num, err := aoc.StringToInt(buffer.String())
+		case stateMul:
+			if rn == '(' {
+				// Found 'mul(', start parsing the first number
+				numBuffer.Reset() // Clear the buffer for the new number
+				state = stateMulOpenParen
+			} else {
+				state = stateScan
+			}
+		case stateMulOpenParen:
+			if rn >= '0' && rn <= '9' {
+				// Found a digit, start accumulating the first number
+				numBuffer.WriteRune(rn)
+				state = stateMulNumber1
+			} else {
+				state = stateScan
+			}
+		case stateMulNumber1:
+			if rn >= '0' && rn <= '9' && numBuffer.Len() < maxNumLength {
+				numBuffer.WriteRune(rn)
+			} else if rn == ',' {
+				// Finished parsing first number, convert it to an integer
+				parsed, err := strconv.Atoi(numBuffer.String())
 				if err != nil {
-					panic(err)
+					panic(fmt.Sprintf("Failed to parse number: %v", err))
 				}
-				num1 = num
-				buffer.Reset()
-				continue
+				num1 = parsed
+				numBuffer.Reset() // Clear the buffer for the second number
+				state = stateMulComma
+			} else {
+				state = stateScan
 			}
-			// if closing bracket is found, complete the multiplication
-			if char == ')' {
-				num, err := aoc.StringToInt(buffer.String())
+		case stateMulComma:
+			if rn >= '0' && rn <= '9' {
+				// Found a digit, start accumulating the second number
+				numBuffer.WriteRune(rn)
+				state = stateMulNumber2
+			} else {
+				state = stateScan
+			}
+		case stateMulNumber2:
+			if rn >= '0' && rn <= '9' && numBuffer.Len() < maxNumLength {
+				// Accumulate digits for the second number, up to max length
+				numBuffer.WriteRune(rn)
+			} else if rn == ')' {
+				// Finished parsing second number, parse it to an integer
+				parsed, err := strconv.Atoi(numBuffer.String())
 				if err != nil {
-					panic(err)
+					panic(fmt.Sprintf("Failed to parse number: %v", err))
 				}
-				num2 = num
-				// add the product of the two numbers to the total
-				total += num1 * num2
-				state = 0 // reset to search for next command
-				buffer.Reset()
-				continue
+				num2 = parsed
+				// If both numbers are valid and `mul` is enabled, add to sum
+				if num1 >= 0 && num2 >= 0 && enabled {
+					sum += num1 * num2
+				}
+				// Reset to scanning state
+				state = stateScan
+			} else {
+				state = stateScan
 			}
-			// if unexpected character is found, reset state and buffer
-			buffer.Reset()
-			state = 0
-		case 2: // `do()` - enable multiplication
-			char, err := reader.ReadByte()
-			if err != nil {
-				return total // end of file
+		case stateD:
+			if rn == 'o' {
+				// Found 'do', could be the start of 'do()'
+				state = stateDo
+			} else {
+				state = stateScan
 			}
-			if char == ')' {
-				multiply = true // enable multiplication for future `mul` commands
-				state = 0
-				continue
+		case stateDo:
+			if rn == '(' {
+				// Found 'do(', enable future multiplications
+				state = stateDoOpenParen
+			} else if rn == 'n' {
+				// Found 'don', could be the start of 'don't'
+				state = stateDon
+			} else {
+				state = stateScan
 			}
-			state = 0 // unexpected character, reset state
-		case 3: // `don't()` - disable multiplication
-			char, err := reader.ReadByte()
-			if err != nil {
-				return total // end of file
+		case stateDon:
+			if rn == '\'' {
+				// Found 'don'', could be the start of 'don't'
+				state = stateDont
+			} else {
+				state = stateScan
 			}
-			if char == ')' {
-				multiply = false // disable multiplication for future `mul` commands
-				state = 0
-				continue
+		case stateDont:
+			if rn == 't' {
+				// Found 'don't', expecting '(' next
+				// Waiting for next character to determine state
+			} else if rn == '(' {
+				// Found 'don't(', disable future multiplications
+				state = stateDontOpenParen
+			} else {
+				state = stateScan
 			}
-			state = 0 // unexpected character, reset state
+		case stateDontOpenParen:
+			if rn == ')' {
+				// Found 'don't()', disable `mul` operations
+				enabled = false
+				state = stateScan
+			} else {
+				state = stateScan
+			}
+		case stateDoOpenParen:
+			if rn == ')' {
+				// Found 'do()', enable `mul` operations
+				enabled = true
+				state = stateScan
+			} else {
+				state = stateScan
+			}
+		default:
+			state = stateScan
 		}
 	}
+
+	return sum
 }
