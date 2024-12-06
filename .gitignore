@@ -1,0 +1,2 @@
+# ignore input.txt in nested directories
+*/*/input.txt
