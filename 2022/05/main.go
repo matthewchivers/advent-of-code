@@ -21,18 +21,15 @@ const (
 	instructionInput               // Represents instruction parsing phase
 )
 
-var (
-	lines = aoc.ReadFileAsLines("input.txt")
-)
-
 func main() {
-	log.Println("Part One: ", partOne())
-	log.Println("Part Two: ", partTwo())
+	lines := aoc.ReadFileAsLines("input.txt")
+	log.Println("Part One: ", partOne(lines))
+	log.Println("Part Two: ", partTwo(lines))
 }
 
 // partOne simulates moving crates one at a time based on the parsed instructions
-func partOne() string {
-	stacks, instructions := parseLines()
+func partOne(input []string) string {
+	stacks, instructions := parseLines(input)
 	for _, inst := range instructions {
 		moveCrates(stacks, inst, false)
 	}
@@ -40,8 +37,8 @@ func partOne() string {
 }
 
 // partTwo simulates moving multiple crates at once using a buffer stack
-func partTwo() string {
-	stacks, instructions := parseLines()
+func partTwo(input []string) string {
+	stacks, instructions := parseLines(input)
 	for _, inst := range instructions {
 		moveCrates(stacks, inst, true)
 	}
@@ -82,11 +79,11 @@ func getTopBoxes(outputStack []aoc.Stack[rune]) string {
 }
 
 // parseLines parses the input lines to create stacks and instruction sets
-func parseLines() ([]aoc.Stack[rune], []instruction) {
-	stacks := make([]aoc.Stack[rune], (len(lines[0])/4 + 1))
+func parseLines(input []string) ([]aoc.Stack[rune], []instruction) {
+	stacks := make([]aoc.Stack[rune], (len(input[0])/4 + 1))
 	instructions := []instruction{}
 	currentStatus := stackInput
-	for _, line := range lines {
+	for _, line := range input {
 		if line != "" {
 			switch currentStatus {
 			case stackInput:

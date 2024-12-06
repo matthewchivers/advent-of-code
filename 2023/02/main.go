@@ -19,17 +19,18 @@ var (
 )
 
 func main() {
+	lines := util.ReadFileAsLines("input.txt")
 	fmt.Println("Hello, advent of code 2023 - Day 2!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(lines))
+	fmt.Println("Part two:", partTwo(lines))
 }
 
 // partOne returns the answer to part one of the day's puzzle
 // Add all GameIDs that have a red, green and blue value less than or equal to the gameMax
-func partOne() int {
+func partOne(input []string) int {
 	sum := 0
-	lines := util.ReadFileAsLines("input.txt")
-	for i, line := range lines {
+
+	for i, line := range input {
 		gameRes := processGameLine(line)
 		if gameRes.red <= gameMax.red && gameRes.green <= gameMax.green && gameRes.blue <= gameMax.blue {
 			sum += i + 1 // GameID starts at 1 and continues sequentially
@@ -40,10 +41,10 @@ func partOne() int {
 
 // partTwo returns the answer to part two of the day's puzzle
 // Add all the power sets of red, green and blue for each game
-func partTwo() int {
+func partTwo(input []string) int {
 	sum := 0
-	lines := util.ReadFileAsLines("input.txt")
-	for _, line := range lines {
+
+	for _, line := range input {
 		gameRes := processGameLine(line)
 		sum += gameRes.red * gameRes.green * gameRes.blue
 	}

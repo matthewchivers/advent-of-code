@@ -6,21 +6,17 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
-var (
-	lines = aoc.ReadFileAsLines("input.txt")
-)
-
 // main is the entry point of the program.
 func main() {
-
-	log.Println("Part One Total:", partOne())
-	log.Println("Part Two Total:", partTwo())
+	lines := aoc.ReadFileAsLines("input.txt")
+	log.Println("Part One Total:", partOne(lines))
+	log.Println("Part Two Total:", partTwo(lines))
 }
 
 // partOne calculates the total value for part one by splitting each line and finding the common character.
-func partOne() int {
+func partOne(input []string) int {
 	total := 0
-	for _, line := range lines {
+	for _, line := range input {
 		firstHalf, secondHalf := splitStringInHalf(line)
 		commonRune := findCommonRune(firstHalf, secondHalf)
 		total += getRuneValue(commonRune)
@@ -29,10 +25,10 @@ func partOne() int {
 }
 
 // partTwo calculates the total value for part two by finding the common character across chunks of three lines.
-func partTwo() int {
+func partTwo(input []string) int {
 	totalSum := 0
-	for i := 0; i < len(lines); i += 3 {
-		commonRune := findCommonRune(lines[i], lines[i+1], lines[i+2])
+	for i := 0; i < len(input); i += 3 {
+		commonRune := findCommonRune(input[i], input[i+1], input[i+2])
 		totalSum += getRuneValue(commonRune)
 	}
 	return totalSum

@@ -10,7 +10,6 @@ import (
 
 var (
 	root     = directory{}
-	lines    = aoc.ReadFileAsLines("input.txt")
 	dirSizes map[string]int
 )
 
@@ -23,20 +22,21 @@ type directory struct {
 }
 
 func main() {
-	log.Println("Part One:", partOne())
-	log.Println("Part Two:", partTwo())
+	lines := aoc.ReadFileAsLines("input.txt")
+	log.Println("Part One:", partOne(lines))
+	log.Println("Part Two:", partTwo(lines))
 }
 
 // calculates the total size of all directories and files whose size is less than 100000 and returns the result.
-func partOne() int {
-	initialise()
+func partOne(input []string) int {
+	initialise(input)
 	size := addUnder100K()
 	return size
 }
 
 // calculates the smallest directory that can be deleted to free up 30000000 bytes of space and returns the size of that directory.
-func partTwo() int {
-	initialise()
+func partTwo(input []string) int {
+	initialise(input)
 	totalSizeOccupied := dirSizes["/"]
 	totalSizeAvailable := 70000000 - totalSizeOccupied
 	totalSizeRequired := 30000000
@@ -52,9 +52,9 @@ func partTwo() int {
 }
 
 // populates the directories and files and stores the size of each directory in a map.
-func initialise() {
+func initialise(input []string) {
 	if root.directories == nil {
-		populateDirectories()
+		populateDirectories(input)
 	}
 	if dirSizes == nil {
 		traverseDirectories()
@@ -97,11 +97,11 @@ func traverseDirectory(dir *directory, path string) int {
 }
 
 // populates the directories and files from the input.
-func populateDirectories() {
+func populateDirectories(input []string) {
 	root.directories = make(map[string]*directory)
 	root.files = make(map[string]int)
 	currentDir := &root
-	for _, line := range lines {
+	for _, line := range input {
 		switch line[0] {
 		case '$': // command
 			command := line[2:4]

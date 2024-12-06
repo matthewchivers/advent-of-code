@@ -6,25 +6,22 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
-var (
-	lines []string = aoc.ReadFileAsLines("input.txt")
-)
-
 func main() {
+	lines := aoc.ReadFileAsLines("input.txt")
 	// Print results for both parts of the challenge
-	log.Println("Part 1: Highest number of calories being carried by a single elf: ", calculatePartOne())
-	log.Println("Part 2: Total number of calories being carried by the top three elves: ", calculatePartTwo())
+	log.Println("Part 1: Highest number of calories being carried by a single elf: ", calculatePartOne(lines))
+	log.Println("Part 2: Total number of calories being carried by the top three elves: ", calculatePartTwo(lines))
 }
 
 // calculatePartOne calculates and returns the highest number of calories being carried by a single elf.
-func calculatePartOne() int {
-	podium := populatePodium(lines)
+func calculatePartOne(input []string) int {
+	podium := populatePodium(input)
 	return podium.Highest()
 }
 
 // calculatePartTwo calculates and returns the total number of calories carried by the top three elves.
-func calculatePartTwo() int {
-	podium := populatePodium(lines)
+func calculatePartTwo(input []string) int {
+	podium := populatePodium(input)
 	return podium.Total()
 }
 

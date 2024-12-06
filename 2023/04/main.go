@@ -22,17 +22,18 @@ func NewScratchCard(winningNumbers map[string]bool, entryNumbers []string) *Scra
 }
 
 func main() {
+	lines := util.ReadFileAsLines("input.txt")
 	fmt.Println("Hello, advent of code 2023 - Day 4!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(lines))
+	fmt.Println("Part two:", partTwo(lines))
 }
 
 // partOne returns the answer to part one of the day's puzzle
 // Each winning number on a card doubles the score (score 1 for the first match)
 // Returns the total score for all cards
-func partOne() int {
+func partOne(input []string) int {
 	score := 0
-	for _, scratchCard := range getInventory() {
+	for _, scratchCard := range getInventory(input) {
 		lineScore := 0
 		for _, entry := range scratchCard.entryNumbers {
 			if scratchCard.winningNumbers[entry] {
@@ -49,8 +50,8 @@ func partOne() int {
 // e.g. 4 matches grants 1 copy each of the next 4 cards
 // This stacks (if I have 2 cards with 4 matches, I get 2 copies each of the next 4 cards)
 // Returns the total number of cards
-func partTwo() int {
-	inv := getInventory()
+func partTwo(input []string) int {
+	inv := getInventory(input)
 	for cardNumber := 1; cardNumber < len(inv)+1; cardNumber++ {
 		matches := 0
 		scratchcard := *inv[cardNumber]
@@ -89,10 +90,9 @@ func parseLine(line string) (map[string]bool, []string) {
 	return winningNumbersMap, entryNumbers
 }
 
-func getInventory() map[int]*ScratchCard {
-	lines := util.ReadFileAsLines("input.txt")
+func getInventory(input []string) map[int]*ScratchCard {
 	inv := make(map[int]*ScratchCard)
-	for i, line := range lines {
+	for i, line := range input {
 		// i + 1 because the card numbers start at 1
 		// makes debugging more human-friendly
 		inv[i+1] = NewScratchCard(parseLine(line))

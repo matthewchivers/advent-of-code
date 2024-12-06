@@ -8,15 +8,12 @@ import (
 	"github.com/matthewchivers/advent-of-code/util"
 )
 
-var (
-	lines = util.ReadFileAsLines("input.txt")
-)
-
 func main() {
-	fmt.Println("Hello, Advent of Code 2023 - Day 6!")
+	lines := util.ReadFileAsLines("input.txt")
 
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Hello, Advent of Code 2023 - Day 6!")
+	fmt.Println("Part one:", partOne(lines))
+	fmt.Println("Part two:", partTwo(lines))
 }
 
 type Race struct {
@@ -24,24 +21,22 @@ type Race struct {
 }
 
 // partOne calculates the total number of ways to win all races combined
-func partOne() int {
-	races, err := parseRaces(lines[0], lines[1], false)
+func partOne(input []string) int {
+	races, err := parseRaces(input[0], input[1], false)
 	if err != nil {
 		panic(err)
 	}
 	totalWays := 1
 	for _, race := range races {
-		totalWays *= calculateWinningWays(race)
-		if totalWays == 0 {
-			break // Exit early if no ways to win exist
-		}
+		ways := calculateWinningWays(race)
+		totalWays *= ways
 	}
 	return totalWays
 }
 
 // partTwo calculates the number of ways to win a single combined race
-func partTwo() int {
-	races, err := parseRaces(lines[0], lines[1], true)
+func partTwo(input []string) int {
+	races, err := parseRaces(input[0], input[1], true)
 	if err != nil {
 		panic(err)
 	}

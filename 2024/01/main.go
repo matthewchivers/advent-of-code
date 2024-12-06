@@ -9,17 +9,16 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
-var lines = aoc.ReadFileAsLines("input.txt")
-
 func main() {
+	lines := aoc.ReadFileAsLines("input.txt")
 	fmt.Println("Hello, advent of code 2024 - Day 1!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(lines))
+	fmt.Println("Part two:", partTwo(lines))
 }
 
 // partOne calculates the total distance between paired location IDs from two lists
-func partOne() int {
-	listA, listB := parseLists()
+func partOne(input []string) int {
+	listA, listB := parseLists(input)
 	slices.Sort(listA)
 	slices.Sort(listB)
 
@@ -30,32 +29,29 @@ func partOne() int {
 	return totalDiff
 }
 
-// partTwo calculates a similarity score based on occurrences of shared location IDs
-func partTwo() int {
-	occurrences := map[int]int{}
-	listA, listB := parseLists()
+// partTwo calculates the similarity score based on frequency of matching location IDs
+func partTwo(input []string) int {
+	listA, listB := parseLists(input)
 
-	for _, intA := range listA {
-		occurrences[intA] = 0
-	}
-
-	total := 0
+	// Create a frequency map for listB
+	freqMap := make(map[int]int)
 	for _, num := range listB {
-		if _, ok := occurrences[num]; ok {
-			occurrences[num]++
-		}
+		freqMap[num]++
 	}
 
-	for k, v := range occurrences {
-		total += k * v
+	similarityScore := 0
+	for _, num := range listA {
+		count := freqMap[num]
+		similarityScore += num * count
 	}
-	return total
+
+	return similarityScore
 }
 
 // parseLists extracts two lists of integers from input lines
-func parseLists() ([]int, []int) {
+func parseLists(input []string) ([]int, []int) {
 	listA, listB := []int{}, []int{}
-	for _, line := range lines {
+	for _, line := range input {
 		parts := strings.Split(line, "   ")
 		intA, _ := aoc.StringToInt(parts[0])
 		intB, _ := aoc.StringToInt(parts[1])

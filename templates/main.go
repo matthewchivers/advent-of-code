@@ -6,22 +6,19 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
-var (
-	lines = aoc.ReadFileAsLines("input.txt")
-)
-
 func main() {
+	lines := aoc.ReadFileAsLines("input.txt")
 	fmt.Println("Hello, advent of code {{YEAR}} - Day {{DAY}}!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(lines))
+	fmt.Println("Part two:", partTwo(lines))
 }
 
-func partOne() int {
+func partOne(input []string) int {
 	fmt.Println("Part one not implemented")
 	return 0
 }
 
-func partTwo() int {
+func partTwo(input []string) int {
 	fmt.Println("Part two not implemented")
 	return 0
 }

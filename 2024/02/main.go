@@ -7,26 +7,25 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
-var lines = aoc.ReadFileAsLines("input.txt")
-
 // Glossary:
 // - "report" refers to a list of levels.
 // - "level" refers to an individual integer value in the report.
 
 func main() {
+	lines := aoc.ReadFileAsLines("input.txt")
 	fmt.Println("Hello, advent of code 2024 - Day 2!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(lines))
+	fmt.Println("Part two:", partTwo(lines))
 }
 
 // partOne counts how many reports are safe (adhere to rules)
-func partOne() int {
-	return countSafe(lines, isReportSafe)
+func partOne(input []string) int {
+	return countSafe(input, isReportSafe)
 }
 
 // partTwo counts how many reports are safe by removing up to one level.
-func partTwo() int {
-	return countSafe(lines, isSafeWithOneRemoval)
+func partTwo(input []string) int {
+	return countSafe(input, isSafeWithOneRemoval)
 }
 
 // countSafe counts how many reports meet the provided safety criteria (safeFunc)

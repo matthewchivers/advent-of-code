@@ -6,28 +6,25 @@ import (
 	aoc "github.com/matthewchivers/advent-of-code/util"
 )
 
-var (
-	data = aoc.ReadFileAsBytes("input.txt")
-)
-
 func main() {
-	fmt.Println("Part 1:", partOne())
-	fmt.Println("Part 2:", partTwo())
+	data := aoc.ReadFileAsBytes("input.txt")
+	fmt.Println("Part 1:", partOne(data))
+	fmt.Println("Part 2:", partTwo(data))
 }
 
-func partOne() int {
-	return getFirstUnique(4)
+func partOne(data []byte) int {
+	return getFirstUnique(data, 4)
 }
 
-func partTwo() int {
-	return getFirstUnique(14)
+func partTwo(data []byte) int {
+	return getFirstUnique(data, 14)
 }
 
 // getFirstUnique returns the index of the first window of size `size` that contains no duplicate bytes
 // If no such window exists, -1 is returned
 // The function uses a sliding window approach to keep track of the frequency of bytes in the window
 // and the number of duplicate bytes in the window
-func getFirstUnique(size int) int {
+func getFirstUnique(data []byte, size int) int {
 	var freq [256]int // count occurrences of each byte (0-256) in the window
 	duplicates := 0   // track number of duplicate bytes in the window
 

@@ -25,26 +25,27 @@ func init() {
 }
 
 func main() {
+	lines := util.ReadFileAsLines("input.txt")
 	fmt.Println("Hello, advent of code 2023 - Day 1!")
-	fmt.Println("Part one:", partOne())
-	fmt.Println("Part two:", partTwo())
+	fmt.Println("Part one:", partOne(lines))
+	fmt.Println("Part two:", partTwo(lines))
 }
 
 // partOne returns the sum of the first and last numbers (digits) in each line
-func partOne() int {
-	return loopLinesAndChars(1)
+func partOne(input []string) int {
+	return loopLinesAndChars(input, 1)
 }
 
 // partTwo returns the sum of the first and last numbers (digits or words) in each line
-func partTwo() int {
-	return loopLinesAndChars(2)
+func partTwo(input []string) int {
+	return loopLinesAndChars(input, 2)
 }
 
 // loopLinesAndChars loops through the lines and characters of the input file
-func loopLinesAndChars(part int) int {
+func loopLinesAndChars(input []string, part int) int {
 	sum := 0
-	lines := util.ReadFileAsLines("input.txt")
-	for _, line := range lines {
+
+	for _, line := range input {
 		first, last := extractFirstLast(line, part)
 		if integer, err := util.StringToInt(first + last); err != nil {
 			fmt.Println(err)

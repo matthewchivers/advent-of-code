@@ -8,21 +8,21 @@ import (
 )
 
 var (
-	points                = []byte("ABCXYZ")                 // Maps enemy instructions (A, B, C) and player instructions (X, Y, Z)
-	lines                 = aoc.ReadFileAsLines("input.txt") // Reads the input file as lines
-	rock, paper, scissors = 1, 2, 3                          // Assigns numeric values to rock, paper, and scissors
+	points                = []byte("ABCXYZ") // Maps enemy instructions (A, B, C) and player instructions (X, Y, Z)
+	rock, paper, scissors = 1, 2, 3          // Assigns numeric values to rock, paper, and scissors
 )
 
 func main() {
-	log.Println("Total Score - Part One:", processLines(1))
-	log.Println("Total Score - Part Two:", processLines(2))
+	lines := aoc.ReadFileAsLines("input.txt") // Reads the input file as lines
+	log.Println("Total Score - Part One:", processLines(1, lines))
+	log.Println("Total Score - Part Two:", processLines(2, lines))
 }
 
 // processLines processes each line of input based on the problem's part (1 or 2).
 // It calculates and returns the total score.
-func processLines(part int) int {
+func processLines(part int, input []string) int {
 	score := 0
-	for _, line := range lines {
+	for _, line := range input {
 		// enemyInstruction and myInstruction are derived from the input line.
 		enemyInstruction := bytes.IndexByte(points, line[0])%3 + 1
 		myInstruction := bytes.IndexByte(points, line[2])%3 + 1
