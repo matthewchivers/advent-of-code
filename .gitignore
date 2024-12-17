@@ -1,2 +1,10 @@
 # ignore input.txt in nested directories
 */*/input.txt
+
+# Editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
