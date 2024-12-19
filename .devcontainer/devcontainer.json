@@ -2,32 +2,36 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
 	"name": "Go",
-
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-	
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/guiyomh/features/golangci-lint:0": {
 			"version": "latest"
 		}
 	},
-	
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],1
-	
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": [
 		"echo 'alias gs=\"git status\"' >> ~/.bashrc"
 	],
-	
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"github.copilot",
 				"ms-azuretools.vscode-docker"
 			]
+		},
+		"codespaces": {
+			"repositories": {
+				"matthewchivers/advent-of-code-input": {
+					"permissions": {
+						"contents": "write"
+					}
+				}
+			}
 		}
 	}
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
