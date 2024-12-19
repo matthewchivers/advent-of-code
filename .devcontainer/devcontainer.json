@@ -19,8 +19,7 @@
 	
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": [
-		"go version",
-		"alias gs='git status'"
+		"echo 'alias gs=\"git status\"' >> ~/.bashrc"
 	],
 	
 	"customizations": {
