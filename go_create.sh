@@ -15,18 +15,23 @@ DAY=$(echo $DAY | sed 's/^0*//')
 DAYPADDED=$(printf "%02d" $DAY) # Add leading zeros for usage in the directory name
 
 # Base directory (default to current directory if not provided)
-BASE_DIR=${3:-.}
+BASE_DIR=$(pwd)
 
 # Full path to the target directory
 TARGET_DIR="$BASE_DIR/$YEAR/$DAYPADDED"
+INPUT_DIR="$BASE_DIR/input/$YEAR/$DAYPADDED"
 
-# Create the directory if it doesn't exist
-if [ -d "$TARGET_DIR" ]; then
-    echo "Directory $TARGET_DIR already exists."
-else
-    mkdir -p "$TARGET_DIR"
-    echo "Created directory $TARGET_DIR."
-fi
+create_target_dir() {
+    if [ -d "$1" ]; then
+        echo "Directory $1 already exists."
+    else
+        mkdir -p "$1"
+        echo "Created directory $1."
+    fi
+}
+
+create_target_dir "$TARGET_DIR"
+create_target_dir "$INPUT_DIR"
 
 # Function to create (not overwrite) a file from a template
 create_from_template() {
@@ -47,7 +52,13 @@ create_from_template "$TEMPLATE_DIR/main.go" "$TARGET_DIR/main.go"
 create_from_template "$TEMPLATE_DIR/main_test.go" "$TARGET_DIR/main_test.go"
 create_from_template "$TEMPLATE_DIR/README.md" "$TARGET_DIR/README.md"
 create_from_template "$TEMPLATE_DIR/Makefile" "$TARGET_DIR/Makefile"
-touch "$TARGET_DIR/input.txt"
-echo "Created $TARGET_DIR/input.txt"
-touch "$TARGET_DIR/sample.txt"
-echo "Created $TARGET_DIR/sample.txt"
+create_from_template "$TEMPLATE_DIR/input.txt" "$INPUT_DIR/input.txt"
+create_from_template "$TEMPLATE_DIR/sample.txt" "$TARGET_DIR/sample.txt"
+
+# Create or verify symlink to input file in submodule
+if [ -L "$TARGET_DIR/input.txt" ] || [ -f "$TARGET_DIR/input.txt" ]; then
+    echo "Symlink or file $TARGET_DIR/input.txt already exists."
+else
+    ln -s "$INPUT_DIR/input.txt" "$TARGET_DIR/input.txt"
+    echo "Created symlink $TARGET_DIR/input.txt -> $INPUT_DIR/input.txt"
+fi
